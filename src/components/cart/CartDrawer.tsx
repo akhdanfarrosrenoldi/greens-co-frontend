@@ -107,7 +107,7 @@ export default function CartDrawer() {
                         onClick={() =>
                           updateQty(item.productId, item.variantId, item.qty + 1)
                         }
-                        className="w-6 h-6 rounded-md bg-green-DEFAULT text-white flex items-center justify-center hover:bg-green-dark transition-colors"
+                        className="w-6 h-6 rounded-md bg-green-DEFAULT text-green-dark flex items-center justify-center hover:bg-green-dark hover:text-white transition-colors"
                       >
                         <Plus size={10} />
                       </button>
@@ -129,7 +129,19 @@ export default function CartDrawer() {
             <Link
               href="/checkout"
               onClick={closeCart}
-              className="flex items-center justify-center gap-2 w-full py-3.5 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark transition-all hover:-translate-y-px shadow-lg shadow-green-DEFAULT/30"
+              className="
+              flex items-center justify-center gap-2
+              w-full py-3.5
+              bg-green-DEFAULT
+              text-green-dark
+              rounded-full
+              font-semibold
+              transition-all
+              hover:bg-green-dark
+              hover:text-white
+              hover:-translate-y-px
+              shadow-lg shadow-green-DEFAULT/30
+            "
             >
               Proceed to Checkout
               <ArrowRight size={16} />

@@ -132,7 +132,7 @@ export default function CartPage() {
 
               <Link
                 href="/checkout"
-                className="flex items-center justify-center gap-2 w-full py-4 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark hover:-translate-y-0.5 transition-all shadow-[0_4px_16px_rgba(22,163,74,0.3)]"
+                className="flex items-center justify-center gap-2 w-full py-4 bg-green-DEFAULT text-green-dark rounded-full font-semibold hover:bg-green-dark hover:text-white hover:-translate-y-0.5 transition-all shadow-[0_4px_16px_rgba(22,163,74,0.3)]"
               >
                 Proceed to Checkout
                 <ArrowRight size={16} />

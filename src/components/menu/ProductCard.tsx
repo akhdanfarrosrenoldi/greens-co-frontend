@@ -6,6 +6,7 @@ import { Plus, Star, Heart } from 'lucide-react'
 import { Product } from '@/types'
 import { formatRupiah } from '@/lib/utils'
 import { useCart } from '@/hooks/useCart'
+import { useState } from 'react'
 
 interface ProductCardProps {
   product: Product
@@ -36,6 +37,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   const badge = product.badge ? BADGE_CONFIG[product.badge] : null
 
+  const [liked, setLiked] = useState(false)
+
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-[#e5e7eb] hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(0,0,0,0.09)] transition-all duration-200 group">
       {/* Image wrapper */}
@@ -63,10 +66,24 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
         {/* Wishlist — always visible */}
         <button
-          className="absolute top-[10px] right-[10px] w-8 h-8 rounded-full bg-white flex items-center justify-center text-muted hover:text-red-500 hover:scale-110 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+          onClick={() => setLiked(prev => !prev)}
+          className={`
+            absolute top-[10px] right-[10px]
+            w-8 h-8 rounded-full
+            bg-white
+            flex items-center justify-center
+            shadow-[0_2px_8px_rgba(0,0,0,0.1)]
+            transition-all duration-200
+            hover:scale-110
+            active:scale-95
+            ${liked ? 'text-red-500' : 'text-muted hover:text-red-500'}
+          `}
           aria-label="Add to wishlist"
         >
-          <Heart size={15} />
+          <Heart
+            size={15}
+            fill={liked ? 'currentColor' : 'none'}
+          />
         </button>
       </div>
 

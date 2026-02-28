@@ -113,7 +113,7 @@ export default function CheckoutPage() {
                     onClick={() => handleToggleType(type)}
                     className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all ${
                       orderType === type
-                        ? 'bg-green-DEFAULT text-white shadow-sm'
+                        ? 'bg-green-DEFAULT text-green-dark shadow-sm'
                         : 'text-muted hover:text-[#111827]'
                     }`}
                   >
@@ -278,7 +278,7 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={isSubmitting || items.length === 0}
-              className="w-full flex items-center justify-center gap-2 py-4 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark hover:-translate-y-0.5 transition-all shadow-[0_4px_16px_rgba(22,163,74,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-4 bg-green-DEFAULT text-green-dark rounded-full font-semibold hover:bg-green-dark hover:text-white hover:-translate-y-0.5 transition-all shadow-[0_4px_16px_rgba(22,163,74,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <Loader2 size={16} className="animate-spin" />

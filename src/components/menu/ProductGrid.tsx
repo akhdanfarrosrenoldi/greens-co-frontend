@@ -72,7 +72,7 @@ export default function ProductGrid({ products, loading, total }: ProductGridPro
             onClick={() => setView('grid')}
             className={`w-[34px] h-[34px] rounded-lg border flex items-center justify-center transition-all ${
               view === 'grid'
-                ? 'bg-green-DEFAULT border-green-DEFAULT text-white'
+                ? 'bg-green-DEFAULT border-green-DEFAULT text-green-dark'
                 : 'border-[#e5e7eb] text-muted hover:border-green-DEFAULT hover:text-green-DEFAULT'
             }`}
             aria-label="Grid view"
@@ -83,7 +83,7 @@ export default function ProductGrid({ products, loading, total }: ProductGridPro
             onClick={() => setView('list')}
             className={`w-[34px] h-[34px] rounded-lg border flex items-center justify-center transition-all ${
               view === 'list'
-                ? 'bg-green-DEFAULT border-green-DEFAULT text-white'
+                ? 'bg-green-DEFAULT border-green-DEFAULT text-green-dark'
                 : 'border-[#e5e7eb] text-muted hover:border-green-DEFAULT hover:text-green-DEFAULT'
             }`}
             aria-label="List view"

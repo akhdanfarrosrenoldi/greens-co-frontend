@@ -1,66 +1,80 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { User } from '@/types'
-import { getToken, getSavedUser, saveToken, saveUser, removeToken } from '@/lib/auth'
-import { login as apiLogin, register as apiRegister, getMe } from '@/lib/api'
+import { supabase } from '@/lib/supabase'
+
+function mapUser(supabaseUser: SupabaseUser): User {
+  const role =
+    supabaseUser.user_metadata?.role ??
+    supabaseUser.app_metadata?.role ??
+    'CUSTOMER'
+  return {
+    id: supabaseUser.id,
+    name: supabaseUser.user_metadata?.name ?? supabaseUser.email ?? '',
+    email: supabaseUser.email ?? '',
+    role: (role as string).toUpperCase() as User['role'],
+  }
+}
+
+function setCookies(token: string, role: string) {
+  document.cookie = `token=${token}; path=/; max-age=86400`
+  document.cookie = `role=${role.toLowerCase()}; path=/; max-age=86400`
+}
+
+function clearCookies() {
+  document.cookie = 'token=; path=/; max-age=0'
+  document.cookie = 'role=; path=/; max-age=0'
+}
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = getToken()
-    if (token) {
-      const saved = getSavedUser() as User | null
-      if (saved) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUser(saved)
-        setLoading(false)
-      } else {
-        getMe()
-          .then((res) => {
-            setUser(res.data.data)
-            saveUser(res.data.data)
-          })
-          .catch(() => removeToken())
-          .finally(() => setLoading(false))
-      }
-    } else {
+    // Hydrate from current session
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user ? mapUser(data.user) : null)
       setLoading(false)
-    }
+    })
+
+    // Keep state in sync across tabs / token refresh
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ? mapUser(session.user) : null)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
   const login = async (email: string, password: string) => {
-    const res = await apiLogin({ email, password })
-    const { token, user: userData } = res.data
-    saveToken(token)
-    saveUser(userData)
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw error
+    const userData = mapUser(data.user)
     setUser(userData)
-    // Set cookies for middleware route protection
-    document.cookie = `token=${token}; path=/; max-age=86400`
-    document.cookie = `role=${(userData as User).role?.toLowerCase() ?? 'user'}; path=/; max-age=86400`
-    return userData as User
+    setCookies(data.session.access_token, userData.role)
+    return userData
   }
 
   const register = async (name: string, email: string, password: string) => {
-    const res = await apiRegister({ name, email, password })
-    const { token, user: userData } = res.data
-    saveToken(token)
-    saveUser(userData)
-    setUser(userData)
-    // Set cookies for middleware route protection
-    document.cookie = `token=${token}; path=/; max-age=86400`
-    document.cookie = `role=${(userData as User).role?.toLowerCase() ?? 'user'}; path=/; max-age=86400`
-    return userData as User
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
+    })
+    if (error) throw error
+    const userData = mapUser(data.user!)
+    if (data.session) {
+      setUser(userData)
+      setCookies(data.session.access_token, userData.role)
+    }
+    return userData
   }
 
-  const logout = () => {
-    removeToken()
+  const logout = async () => {
+    await supabase.auth.signOut()
     setUser(null)
-    // Clear middleware cookies
-    document.cookie = 'token=; path=/; max-age=0'
-    document.cookie = 'role=; path=/; max-age=0'
+    clearCookies()
   }
 
   return { user, loading, login, register, logout }
