@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greens & Co. — Menu</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --green:#16a34a; --green-dark:#15803d; --green-light:#dcfce7;
+  --green-mid:#bbf7d0; --bg:#ffffff; --surface:#f9fafb;
+  --surface2:#f0fdf4; --border:#e5e7eb; --text:#111827;
+  --muted:#9ca3af; --muted2:#6b7280;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; }
+
+/* NAV */
+nav {
+  position:sticky; top:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 64px;
+  background:rgba(255,255,255,0.95); backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--green); }
+.nav-logo span { color:var(--text); }
+.nav-links { display:flex; gap:32px; list-style:none; }
+.nav-links a { font-size:14px; font-weight:500; color:var(--muted2); text-decoration:none; transition:color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color:var(--green); }
+.nav-actions { display:flex; align-items:center; gap:10px; }
+.cart-btn {
+  position:relative; width:40px; height:40px; border-radius:10px;
+  border:1px solid var(--border); background:white;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--muted2); transition:border-color 0.2s, color 0.2s;
+}
+.cart-btn:hover { border-color:var(--green); color:var(--green); }
+.cart-badge {
+  position:absolute; top:-5px; right:-5px;
+  width:18px; height:18px; background:var(--green); color:white;
+  border-radius:50%; font-size:10px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; border:2px solid white;
+}
+.btn-nav {
+  padding:10px 22px; background:var(--green); color:white;
+  border:none; border-radius:100px;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:6px;
+  transition:background 0.2s;
+}
+.btn-nav:hover { background:var(--green-dark); }
+
+/* PAGE HEADER */
+.page-header {
+  background:linear-gradient(135deg, #f0fdf4 0%, #ffffff 70%);
+  padding:48px 64px 0;
+  border-bottom:1px solid var(--border);
+}
+.breadcrumb {
+  display:flex; align-items:center; gap:8px;
+  font-size:13px; color:var(--muted2); margin-bottom:20px;
+}
+.breadcrumb a { color:var(--green); text-decoration:none; }
+.page-title { font-family:'Playfair Display',serif; font-size:36px; font-weight:700; margin-bottom:8px; }
+.page-desc { font-size:15px; color:var(--muted2); margin-bottom:32px; }
+
+/* CATEGORY TABS */
+.cat-tabs {
+  display:flex; gap:0; overflow-x:auto;
+}
+.cat-tab {
+  padding:14px 24px; font-size:14px; font-weight:500;
+  color:var(--muted2); border:none; background:none;
+  cursor:pointer; white-space:nowrap;
+  border-bottom:2px solid transparent;
+  transition:color 0.2s, border-color 0.2s;
+  display:flex; align-items:center; gap:8px;
+}
+.cat-tab:hover { color:var(--text); }
+.cat-tab.active { color:var(--green); border-bottom-color:var(--green); font-weight:600; }
+.cat-count {
+  background:var(--surface); color:var(--muted2);
+  font-size:11px; font-weight:600; padding:2px 8px; border-radius:100px;
+}
+.cat-tab.active .cat-count { background:var(--green-light); color:var(--green-dark); }
+
+/* CONTENT */
+.content { display:grid; grid-template-columns:260px 1fr; gap:32px; padding:32px 64px 64px; }
+
+/* SIDEBAR FILTER */
+.sidebar { display:flex; flex-direction:column; gap:24px; }
+
+.filter-card {
+  background:white; border:1px solid var(--border); border-radius:16px; padding:20px;
+}
+.filter-title {
+  font-size:13px; font-weight:700; text-transform:uppercase;
+  letter-spacing:1px; color:var(--muted2); margin-bottom:16px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.filter-clear { font-size:12px; color:var(--green); cursor:pointer; font-weight:500; text-transform:none; letter-spacing:0; }
+
+/* Search */
+.search-wrap {
+  position:relative; margin-bottom:8px;
+}
+.search-input {
+  width:100%; padding:10px 16px 10px 40px;
+  border:1px solid var(--border); border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:14px;
+  outline:none; transition:border-color 0.2s;
+  background:var(--surface);
+}
+.search-input:focus { border-color:var(--green); background:white; }
+.search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--muted); }
+
+/* Price range */
+.price-inputs { display:flex; gap:8px; align-items:center; }
+.price-input {
+  flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:8px;
+  font-family:'DM Sans',sans-serif; font-size:13px; outline:none;
+  transition:border-color 0.2s;
+}
+.price-input:focus { border-color:var(--green); }
+.price-sep { color:var(--muted); font-size:13px; }
+
+/* Checkboxes */
+.check-list { display:flex; flex-direction:column; gap:10px; }
+.check-item { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.check-box {
+  width:18px; height:18px; border-radius:5px; border:2px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color 0.2s, background 0.2s; flex-shrink:0;
+}
+.check-item:hover .check-box { border-color:var(--green); }
+.check-item.checked .check-box { background:var(--green); border-color:var(--green); color:white; }
+.check-label { font-size:14px; color:var(--text); }
+.check-num { margin-left:auto; font-size:12px; color:var(--muted); }
+
+/* Sort */
+.sort-select {
+  width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:10px;
+  font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text);
+  outline:none; cursor:pointer; background:var(--surface);
+  transition:border-color 0.2s;
+}
+.sort-select:focus { border-color:var(--green); }
+
+/* PRODUCT GRID */
+.grid-header {
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;
+}
+.grid-count { font-size:14px; color:var(--muted2); }
+.grid-count span { color:var(--text); font-weight:600; }
+.view-toggle { display:flex; gap:4px; }
+.view-btn {
+  width:34px; height:34px; border-radius:8px; border:1px solid var(--border);
+  background:white; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--muted2); transition:all 0.2s;
+}
+.view-btn.active { background:var(--green); border-color:var(--green); color:white; }
+
+.product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+
+.product-card {
+  background:white; border-radius:16px; overflow:hidden;
+  border:1px solid var(--border); transition:transform 0.2s, box-shadow 0.2s; cursor:pointer;
+}
+.product-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.09); }
+
+.product-img { height:200px; position:relative; overflow:hidden; }
+.product-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
+.product-card:hover .product-img img { transform:scale(1.05); }
+
+.product-badge {
+  position:absolute; top:10px; left:10px;
+  font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; color:white;
+}
+.badge-bestseller { background:var(--green); }
+.badge-new { background:#f59e0b; }
+.badge-promo { background:#ef4444; }
+
+.wishlist-btn {
+  position:absolute; top:10px; right:10px;
+  width:32px; height:32px; border-radius:50%;
+  background:white; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--muted2); box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  transition:color 0.2s, transform 0.2s;
+}
+.wishlist-btn:hover { color:#ef4444; transform:scale(1.1); }
+
+.product-body { padding:14px; }
+.product-cat { font-size:11px; color:var(--green); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.product-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; margin-bottom:4px; }
+.product-desc { font-size:12px; color:var(--muted2); line-height:1.5; margin-bottom:12px; }
+
+.product-meta { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.product-rating { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--muted2); }
+.product-dot { width:3px; height:3px; border-radius:50%; background:var(--muted); }
+.product-stock { font-size:12px; }
+.stock-ok { color:var(--green); }
+.stock-low { color:#f59e0b; }
+
+.product-footer { display:flex; justify-content:space-between; align-items:center; }
+.product-price { font-size:17px; font-weight:700; color:var(--green); }
+.product-price-orig { font-size:12px; color:var(--muted); text-decoration:line-through; margin-left:4px; }
+.btn-add {
+  width:34px; height:34px; background:var(--green); color:white;
+  border:none; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s, transform 0.2s;
+}
+.btn-add:hover { background:var(--green-dark); transform:scale(1.1); }
+
+/* PAGINATION */
+.pagination {
+  display:flex; justify-content:center; align-items:center; gap:8px; margin-top:48px;
+}
+.page-btn {
+  width:36px; height:36px; border-radius:8px;
+  border:1px solid var(--border); background:white;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:500; cursor:pointer; color:var(--muted2);
+  transition:all 0.2s;
+}
+.page-btn:hover { border-color:var(--green); color:var(--green); }
+.page-btn.active { background:var(--green); border-color:var(--green); color:white; }
+
+/* EMPTY STATE (hidden by default) */
+.empty-state {
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  padding:64px 32px; text-align:center; color:var(--muted2);
+}
+.empty-icon { margin-bottom:16px; color:var(--muted); }
+.empty-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:600; color:var(--text); margin-bottom:8px; }
+.empty-desc { font-size:14px; line-height:1.6; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Greens <span>&</span> Co.</div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#" class="active">Menu</a></li>
+    <li><a href="#">Bundles</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="cart-btn">
+      <i data-lucide="shopping-cart" width="18" height="18"></i>
+      <div class="cart-badge">3</div>
+    </div>
+    <button class="btn-nav">
+      <i data-lucide="zap" width="14" height="14"></i>
+      Order Now
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="breadcrumb">
+    <a href="#">Home</a>
+    <i data-lucide="chevron-right" width="14" height="14"></i>
+    <span>Menu</span>
+  </div>
+  <h1 class="page-title">Our Fresh Menu</h1>
+  <p class="page-desc">Freshly prepared every morning from locally sourced ingredients.</p>
+
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="filterCat(this, 'all')">
+      <i data-lucide="layout-grid" width="14" height="14"></i>
+      All
+      <span class="cat-count">12</span>
+    </button>
+    <button class="cat-tab" onclick="filterCat(this, 'salad')">
+      <i data-lucide="leaf" width="14" height="14"></i>
+      Salad
+      <span class="cat-count">4</span>
+    </button>
+    <button class="cat-tab" onclick="filterCat(this, 'bowl')">
+      <i data-lucide="utensils" width="14" height="14"></i>
+      Rice Bowl
+      <span class="cat-count">3</span>
+    </button>
+    <button class="cat-tab" onclick="filterCat(this, 'drinks')">
+      <i data-lucide="glass-water" width="14" height="14"></i>
+      Drinks
+      <span class="cat-count">3</span>
+    </button>
+    <button class="cat-tab" onclick="filterCat(this, 'snack')">
+      <i data-lucide="sandwich" width="14" height="14"></i>
+      Snack
+      <span class="cat-count">2</span>
+    </button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="filter-card">
+      <div class="filter-title">Search</div>
+      <div class="search-wrap">
+        <i data-lucide="search" width="15" height="15" class="search-icon"></i>
+        <input class="search-input" type="text" placeholder="Search menu...">
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">
+        Sort By
+      </div>
+      <select class="sort-select">
+        <option>Most Popular</option>
+        <option>Newest First</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+        <option>Best Rating</option>
+      </select>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">
+        Price Range
+        <span class="filter-clear">Reset</span>
+      </div>
+      <div class="price-inputs">
+        <input class="price-input" type="text" placeholder="Min" value="15.000">
+        <span class="price-sep">—</span>
+        <input class="price-input" type="text" placeholder="Max" value="75.000">
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">
+        Availability
+        <span class="filter-clear">Reset</span>
+      </div>
+      <div class="check-list">
+        <label class="check-item checked">
+          <div class="check-box"><i data-lucide="check" width="12" height="12"></i></div>
+          <span class="check-label">Available Now</span>
+          <span class="check-num">10</span>
+        </label>
+        <label class="check-item">
+          <div class="check-box"></div>
+          <span class="check-label">Pre-Order</span>
+          <span class="check-num">2</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="filter-card">
+      <div class="filter-title">
+        Diet Type
+        <span class="filter-clear">Reset</span>
+      </div>
+      <div class="check-list">
+        <label class="check-item checked">
+          <div class="check-box"><i data-lucide="check" width="12" height="12"></i></div>
+          <span class="check-label">Vegetarian</span>
+          <span class="check-num">6</span>
+        </label>
+        <label class="check-item">
+          <div class="check-box"></div>
+          <span class="check-label">Vegan</span>
+          <span class="check-num">4</span>
+        </label>
+        <label class="check-item">
+          <div class="check-box"></div>
+          <span class="check-label">High Protein</span>
+          <span class="check-num">5</span>
+        </label>
+        <label class="check-item">
+          <div class="check-box"></div>
+          <span class="check-label">Low Carb</span>
+          <span class="check-num">3</span>
+        </label>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- GRID -->
+  <div>
+    <div class="grid-header">
+      <div class="grid-count">Showing <span>12 items</span></div>
+      <div class="view-toggle">
+        <button class="view-btn active"><i data-lucide="layout-grid" width="15" height="15"></i></button>
+        <button class="view-btn"><i data-lucide="list" width="15" height="15"></i></button>
+      </div>
+    </div>
+
+    <div class="product-grid">
+
+      <!-- Card 1 -->
+      <div class="product-card">
+        <div class="product-img">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" alt="Garden Fresh Salad" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Garden Fresh Salad'">
+          <div class="product-badge badge-bestseller">Best Seller</div>
+          <button class="wishlist-btn"><i data-lucide="heart" width="15" height="15"></i></button>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">Salad</div>
+          <div class="product-name">Garden Fresh Salad</div>
+          <div class="product-desc">Mixed greens, cherry tomato, cucumber, house dressing</div>
+          <div class="product-meta">
+            <div class="product-rating"><i data-lucide="star" width="12" height="12" style="color:#f59e0b;fill:#f59e0b"></i> 4.9 (128)</div>
+            <div class="product-dot"></div>
+            <span class="product-stock stock-ok">In Stock</span>
+          </div>
+          <div class="product-footer">
+            <div><span class="product-price">Rp 35.000</span></div>
+            <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="product-card">
+        <div class="product-img">
+          <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" alt="Teriyaki Chicken Bowl" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Teriyaki Chicken Bowl'">
+          <div class="product-badge badge-new">New</div>
+          <button class="wishlist-btn"><i data-lucide="heart" width="15" height="15"></i></button>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">Rice Bowl</div>
+          <div class="product-name">Teriyaki Chicken Bowl</div>
+          <div class="product-desc">Steamed rice, grilled chicken, teriyaki sauce, sesame</div>
+          <div class="product-meta">
+            <div class="product-rating"><i data-lucide="star" width="12" height="12" style="color:#f59e0b;fill:#f59e0b"></i> 4.8 (94)</div>
+            <div class="product-dot"></div>
+            <span class="product-stock stock-ok">In Stock</span>
+          </div>
+          <div class="product-footer">
+            <div><span class="product-price">Rp 45.000</span></div>
+            <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="product-card">
+        <div class="product-img">
+          <img src="https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&q=80" alt="Green Detox Juice" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Green Detox Juice'">
+          <button class="wishlist-btn"><i data-lucide="heart" width="15" height="15"></i></button>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">Drinks</div>
+          <div class="product-name">Green Detox Juice</div>
+          <div class="product-desc">Spinach, apple, ginger, lemon, cucumber blend</div>
+          <div class="product-meta">
+            <div class="product-rating"><i data-lucide="star" width="12" height="12" style="color:#f59e0b;fill:#f59e0b"></i> 4.7 (76)</div>
+            <div class="product-dot"></div>
+            <span class="product-stock stock-low">Stok Terbatas</span>
+          </div>
+          <div class="product-footer">
+            <div><span class="product-price">Rp 28.000</span></div>
+            <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="product-card">
+        <div class="product-img">
+          <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" alt="Overnight Oats" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Overnight Oats'">
+          <button class="wishlist-btn"><i data-lucide="heart" width="15" height="15"></i></button>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">Snack</div>
+          <div class="product-name">Overnight Oats</div>
+          <div class="product-desc">Rolled oats, chia seeds, almond milk, mixed berries</div>
+          <div class="product-meta">
+            <div class="product-rating"><i data-lucide="star" width="12" height="12" style="color:#f59e0b;fill:#f59e0b"></i> 4.8 (53)</div>
+            <div class="product-dot"></div>
+            <span class="product-stock stock-ok">In Stock</span>
+          </div>
+          <div class="product-footer">
+            <div><span class="product-price">Rp 32.000</span></div>
+            <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="product-card">
+        <div class="product-img">
+          <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&q=80" alt="Quinoa Power Bowl" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Quinoa Power Bowl'">
+          <div class="product-badge badge-promo">Promo</div>
+          <button class="wishlist-btn"><i data-lucide="heart" width="15" height="15"></i></button>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">Salad</div>
+          <div class="product-name">Quinoa Power Bowl</div>
+          <div class="product-desc">Quinoa, roasted veggies, avocado, tahini dressing</div>
+          <div class="product-meta">
+            <div class="product-rating"><i data-lucide="star" width="12" height="12" style="color:#f59e0b;fill:#f59e0b"></i> 4.6 (41)</div>
+            <div class="product-dot"></div>
+            <span class="product-stock stock-ok">In Stock</span>
+          </div>
+          <div class="product-footer">
+            <div>
+              <span class="product-price">Rp 38.000</span>
+              <span class="product-price-orig">Rp 45.000</span>
+            </div>
+            <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="product-card">
+        <div class="product-img">
+          <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80" alt="Acai Smoothie Bowl" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Acai Smoothie Bowl'">
+          <button class="wishlist-btn"><i data-lucide="heart" width="15" height="15"></i></button>
+        </div>
+        <div class="product-body">
+          <div class="product-cat">Snack</div>
+          <div class="product-name">Acai Smoothie Bowl</div>
+          <div class="product-desc">Acai, banana, granola, fresh fruits, honey drizzle</div>
+          <div class="product-meta">
+            <div class="product-rating"><i data-lucide="star" width="12" height="12" style="color:#f59e0b;fill:#f59e0b"></i> 4.9 (87)</div>
+            <div class="product-dot"></div>
+            <span class="product-stock stock-ok">In Stock</span>
+          </div>
+          <div class="product-footer">
+            <div><span class="product-price">Rp 42.000</span></div>
+            <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+      <button class="page-btn"><i data-lucide="chevron-left" width="15" height="15"></i></button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn"><i data-lucide="chevron-right" width="15" height="15"></i></button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+document.querySelectorAll('.check-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.classList.toggle('checked');
+    const box = item.querySelector('.check-box');
+    if(item.classList.contains('checked')) {
+      box.innerHTML = '<i data-lucide="check" width="12" height="12"></i>';
+    } else {
+      box.innerHTML = '';
+    }
+    lucide.createIcons();
+  });
+});
+
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

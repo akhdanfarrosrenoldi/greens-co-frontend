@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greens & Co. — Fresh Food, Delivered</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --green: #16a34a;
+  --green-dark: #15803d;
+  --green-light: #dcfce7;
+  --green-mid: #bbf7d0;
+  --bg: #ffffff;
+  --surface: #f9fafb;
+  --surface2: #f0fdf4;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #9ca3af;
+  --muted2: #6b7280;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+/* ── NAVBAR ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 64px;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid transparent;
+  transition:border-color 0.3s, box-shadow 0.3s;
+}
+nav.scrolled { border-color:var(--border); box-shadow:0 1px 16px rgba(0,0,0,0.06); }
+
+.nav-logo {
+  font-family:'Playfair Display',serif;
+  font-size:22px; font-weight:700; color:var(--green);
+}
+.nav-logo span { color:var(--text); }
+
+.nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+.nav-links a {
+  font-size:14px; font-weight:500; color:var(--muted2);
+  text-decoration:none; transition:color 0.2s;
+}
+.nav-links a:hover { color:var(--green); }
+
+.nav-actions { display:flex; align-items:center; gap:10px; }
+
+.cart-btn {
+  position:relative;
+  width:40px; height:40px; border-radius:10px;
+  border:1px solid var(--border); background:white;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--muted2);
+  transition:border-color 0.2s, color 0.2s;
+}
+.cart-btn:hover { border-color:var(--green); color:var(--green); }
+.cart-badge {
+  position:absolute; top:-5px; right:-5px;
+  width:18px; height:18px; background:var(--green); color:white;
+  border-radius:50%; font-size:10px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  border:2px solid white;
+}
+
+.btn-nav {
+  padding:10px 22px; background:var(--green); color:white;
+  border:none; border-radius:100px;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600;
+  cursor:pointer; transition:background 0.2s, transform 0.2s;
+  display:flex; align-items:center; gap:6px;
+}
+.btn-nav:hover { background:var(--green-dark); transform:translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  min-height:100vh;
+  display:grid; grid-template-columns:1fr 1fr;
+  align-items:center; padding:100px 64px 64px; gap:64px;
+  background:linear-gradient(135deg, #f0fdf4 0%, #ffffff 60%);
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-150px; right:-150px;
+  width:600px; height:600px;
+  background:radial-gradient(circle, rgba(22,163,74,0.07) 0%, transparent 70%);
+  border-radius:50%;
+}
+
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--green-light); color:var(--green-dark);
+  padding:6px 14px; border-radius:100px;
+  font-size:13px; font-weight:600; margin-bottom:24px;
+  opacity:0; animation:fadeUp 0.6s ease 0.1s forwards;
+}
+
+.hero-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(40px,5vw,64px); font-weight:700; line-height:1.15;
+  margin-bottom:20px;
+  opacity:0; animation:fadeUp 0.6s ease 0.3s forwards;
+}
+.hero-title .highlight { color:var(--green); font-style:italic; }
+
+.hero-desc {
+  font-size:16px; color:var(--muted2); line-height:1.8;
+  max-width:440px; margin-bottom:36px;
+  opacity:0; animation:fadeUp 0.6s ease 0.5s forwards;
+}
+
+.hero-cta {
+  display:flex; gap:14px; align-items:center;
+  opacity:0; animation:fadeUp 0.6s ease 0.7s forwards;
+}
+
+.btn-primary {
+  padding:14px 28px; background:var(--green); color:white;
+  border:none; border-radius:100px;
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:8px;
+  transition:background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow:0 4px 16px rgba(22,163,74,0.3);
+}
+.btn-primary:hover { background:var(--green-dark); transform:translateY(-2px); box-shadow:0 8px 24px rgba(22,163,74,0.35); }
+
+.btn-secondary {
+  padding:14px 28px; background:transparent; color:var(--text);
+  border:1.5px solid var(--border); border-radius:100px;
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:500;
+  cursor:pointer; transition:border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.btn-secondary:hover { border-color:var(--green); color:var(--green); transform:translateY(-2px); }
+
+.hero-stats {
+  display:flex; gap:32px; margin-top:48px;
+  opacity:0; animation:fadeUp 0.6s ease 0.9s forwards;
+}
+.stat-item { display:flex; flex-direction:column; gap:4px; }
+.stat-num { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--green); }
+.stat-label { font-size:13px; color:var(--muted2); }
+
+/* Hero image */
+.hero-visual {
+  position:relative;
+  opacity:0; animation:fadeLeft 0.8s ease 0.4s forwards;
+}
+
+.hero-img-main {
+  width:100%; height:500px; border-radius:24px; overflow:hidden;
+  box-shadow:0 32px 80px rgba(22,163,74,0.18);
+  position:relative;
+}
+.hero-img-main img { width:100%; height:100%; object-fit:cover; }
+.hero-img-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(0,0,0,0.2), transparent 50%);
+}
+
+.floating-card {
+  position:absolute; background:white; border-radius:16px;
+  padding:12px 16px; box-shadow:0 8px 32px rgba(0,0,0,0.12);
+  display:flex; align-items:center; gap:10px;
+}
+.card-1 { bottom:28px; left:-28px; animation:float 3s ease-in-out infinite; }
+.card-2 { top:28px; right:-28px; animation:float 3s ease-in-out 1.5s infinite; }
+
+.fc-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:var(--green-light); color:var(--green);
+  display:flex; align-items:center; justify-content:center;
+}
+.fc-title { font-size:13px; font-weight:600; color:var(--text); }
+.fc-sub { font-size:11px; color:var(--muted2); margin-top:2px; }
+
+/* ── USP STRIP ── */
+.usp-strip {
+  background:var(--green); padding:18px 64px;
+  display:flex; justify-content:center; gap:64px;
+}
+.usp-item {
+  display:flex; align-items:center; gap:8px;
+  color:white; font-size:14px; font-weight:500;
+}
+
+/* ── SECTIONS ── */
+section { padding:96px 64px; }
+
+.section-tag {
+  display:inline-block; background:var(--green-light);
+  color:var(--green-dark); padding:4px 14px; border-radius:100px;
+  font-size:12px; font-weight:600; letter-spacing:1px;
+  text-transform:uppercase; margin-bottom:16px;
+}
+.section-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,4vw,42px); font-weight:700; line-height:1.2; margin-bottom:12px;
+}
+.section-desc {
+  font-size:15px; color:var(--muted2); max-width:480px; line-height:1.7; margin-bottom:48px;
+}
+
+/* ── FEATURED MENU ── */
+.featured { background:var(--surface); }
+.featured-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:48px; }
+.btn-link {
+  color:var(--green); font-size:14px; font-weight:600;
+  background:none; border:none; cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  transition:gap 0.2s;
+}
+.btn-link:hover { gap:10px; }
+
+.menu-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; }
+
+.menu-card {
+  background:white; border-radius:16px; overflow:hidden;
+  border:1px solid var(--border);
+  transition:transform 0.2s, box-shadow 0.2s; cursor:pointer;
+}
+.menu-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(0,0,0,0.1); }
+
+.menu-card-img {
+  height:200px; position:relative; overflow:hidden;
+}
+.menu-card-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
+.menu-card:hover .menu-card-img img { transform:scale(1.05); }
+
+.menu-badge {
+  position:absolute; top:12px; left:12px;
+  background:var(--green); color:white;
+  font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px;
+}
+.menu-badge.new { background:#f59e0b; }
+
+.menu-card-body { padding:16px; }
+.menu-card-cat { font-size:11px; color:var(--green); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.menu-card-name { font-family:'Playfair Display',serif; font-size:17px; font-weight:600; margin-bottom:6px; }
+.menu-card-desc { font-size:13px; color:var(--muted2); line-height:1.5; margin-bottom:16px; }
+.menu-card-footer { display:flex; justify-content:space-between; align-items:center; }
+.menu-price { font-size:17px; font-weight:700; color:var(--green); }
+
+.btn-add {
+  width:34px; height:34px; background:var(--green); color:white;
+  border:none; border-radius:50%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s, transform 0.2s;
+}
+.btn-add:hover { background:var(--green-dark); transform:scale(1.1); }
+
+/* ── BUNDLES ── */
+.bundles-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+
+.bundle-card {
+  background:white; border:1px solid var(--border); border-radius:20px;
+  overflow:hidden; transition:transform 0.2s, box-shadow 0.2s;
+  cursor:pointer; position:relative;
+}
+.bundle-card:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(0,0,0,0.1); }
+.bundle-card.featured-bundle { border-color:var(--green); box-shadow:0 0 0 2px rgba(22,163,74,0.15); }
+
+.bundle-popular {
+  position:absolute; top:14px; right:14px; z-index:2;
+  background:var(--green); color:white;
+  font-size:11px; font-weight:700; padding:4px 12px; border-radius:100px;
+}
+
+.bundle-img { height:200px; overflow:hidden; position:relative; }
+.bundle-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
+.bundle-card:hover .bundle-img img { transform:scale(1.05); }
+
+.bundle-body { padding:20px; }
+.bundle-name { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; margin-bottom:8px; }
+.bundle-desc { font-size:13px; color:var(--muted2); line-height:1.6; margin-bottom:16px; }
+.bundle-items { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+.bundle-item-tag {
+  background:var(--green-light); color:var(--green-dark);
+  font-size:12px; font-weight:500; padding:4px 10px; border-radius:100px;
+}
+.bundle-footer {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:16px; border-top:1px solid var(--border);
+}
+.bundle-price-main { font-size:20px; font-weight:700; color:var(--green); }
+.bundle-price-save { font-size:12px; color:var(--muted2); }
+.bundle-price-save s { margin-right:4px; }
+.btn-bundle {
+  padding:10px 20px; background:var(--green); color:white;
+  border:none; border-radius:100px;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+  cursor:pointer; transition:background 0.2s, transform 0.2s;
+}
+.btn-bundle:hover { background:var(--green-dark); transform:translateY(-1px); }
+
+/* ── HOW IT WORKS ── */
+.how { background:var(--surface2); }
+.steps-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:32px;
+  position:relative;
+}
+.steps-grid::before {
+  content:''; position:absolute; top:28px; left:12%; right:12%; height:2px;
+  background:repeating-linear-gradient(90deg, var(--green-mid) 0, var(--green-mid) 8px, transparent 8px, transparent 16px);
+  z-index:0;
+}
+.step-item { display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:1; }
+.step-num {
+  width:56px; height:56px; border-radius:50%; background:white;
+  border:2px solid var(--green-mid);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--muted2); margin-bottom:20px;
+  box-shadow:0 4px 16px rgba(22,163,74,0.1);
+}
+.step-item:first-child .step-num,
+.step-item:last-child .step-num { background:var(--green); border-color:var(--green); color:white; }
+.step-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:600; margin-bottom:8px; }
+.step-desc { font-size:13px; color:var(--muted2); line-height:1.6; }
+
+/* ── FOOTER ── */
+footer { background:#111827; color:white; padding:64px; }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; margin-bottom:48px; }
+.footer-logo { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--green); margin-bottom:12px; }
+.footer-tagline { font-size:14px; color:#9ca3af; line-height:1.7; margin-bottom:24px; }
+.footer-social { display:flex; gap:10px; }
+.social-btn {
+  width:36px; height:36px; border-radius:8px; background:#1f2937;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:#9ca3af;
+  transition:background 0.2s, color 0.2s;
+  border:1px solid #374151;
+}
+.social-btn:hover { background:var(--green); color:white; border-color:var(--green); }
+.footer-col-title { font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#9ca3af; margin-bottom:16px; }
+.footer-links { display:flex; flex-direction:column; gap:10px; }
+.footer-links a { font-size:14px; color:#d1d5db; text-decoration:none; display:flex; align-items:center; gap:8px; transition:color 0.2s; }
+.footer-links a:hover { color:var(--green); }
+.footer-bottom { border-top:1px solid #1f2937; padding-top:24px; display:flex; justify-content:space-between; align-items:center; }
+.footer-copy { font-size:13px; color:#6b7280; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeLeft { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.reveal { opacity:0; transform:translateY(32px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo">Greens <span>&</span> Co.</div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#bundles">Bundles</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="cart-btn">
+      <i data-lucide="shopping-cart" width="18" height="18"></i>
+      <div class="cart-badge">2</div>
+    </div>
+    <button class="btn-nav">
+      <i data-lucide="zap" width="14" height="14"></i>
+      Order Now
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">
+      <i data-lucide="leaf" width="14" height="14"></i>
+      Fresh & Healthy Food
+    </div>
+    <h1 class="hero-title">
+      Fresh Food,<br>
+      <span class="highlight">Delivered</span> to<br>
+      Your Door.
+    </h1>
+    <p class="hero-desc">
+      Wholesome, freshly prepared meals made from locally sourced ingredients. 
+      Order now and enjoy healthy eating without the hassle.
+    </p>
+    <div class="hero-cta">
+      <button class="btn-primary">
+        Order Now
+        <i data-lucide="arrow-right" width="16" height="16"></i>
+      </button>
+      <button class="btn-secondary">View Menu</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">500+</span>
+        <span class="stat-label">Happy Customers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">30+</span>
+        <span class="stat-label">Menu Items</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4.9★</span>
+        <span class="stat-label">Rating</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-img-main">
+      <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80" alt="Fresh healthy food" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Fresh healthy food'">
+      <div class="hero-img-overlay"></div>
+    </div>
+    <div class="floating-card card-1">
+      <div class="fc-icon"><i data-lucide="zap" width="18" height="18"></i></div>
+      <div>
+        <div class="fc-title">Fast Delivery</div>
+        <div class="fc-sub">30 mins or less</div>
+      </div>
+    </div>
+    <div class="floating-card card-2">
+      <div class="fc-icon"><i data-lucide="leaf" width="18" height="18"></i></div>
+      <div>
+        <div class="fc-title">100% Fresh</div>
+        <div class="fc-sub">Local ingredients</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USP STRIP -->
+<div class="usp-strip">
+  <div class="usp-item">
+    <i data-lucide="truck" width="16" height="16"></i>
+    Fast Delivery (30 min)
+  </div>
+  <div class="usp-item">
+    <i data-lucide="leaf" width="16" height="16"></i>
+    Fresh Local Ingredients
+  </div>
+  <div class="usp-item">
+    <i data-lucide="heart" width="16" height="16"></i>
+    Healthy & Nutritious
+  </div>
+  <div class="usp-item">
+    <i data-lucide="package" width="16" height="16"></i>
+    Free Pickup Available
+  </div>
+</div>
+
+<!-- FEATURED MENU -->
+<section class="featured" id="menu">
+  <div class="featured-header reveal">
+    <div>
+      <div class="section-tag">Our Menu</div>
+      <h2 class="section-title">Today's Featured Menu</h2>
+      <p class="section-desc">Freshly prepared every morning. Limited stock available daily.</p>
+    </div>
+    <button class="btn-link">
+      View All Menu
+      <i data-lucide="arrow-right" width="14" height="14"></i>
+    </button>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card reveal">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" alt="Garden Fresh Salad" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Garden Fresh Salad'">
+        <div class="menu-badge">Best Seller</div>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-cat">Salad</div>
+        <div class="menu-card-name">Garden Fresh Salad</div>
+        <div class="menu-card-desc">Mixed greens, cherry tomato, cucumber, house dressing</div>
+        <div class="menu-card-footer">
+          <span class="menu-price">Rp 35.000</span>
+          <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card reveal">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" alt="Teriyaki Chicken Bowl" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Teriyaki Chicken Bowl'">
+        <div class="menu-badge new">New</div>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-cat">Rice Bowl</div>
+        <div class="menu-card-name">Teriyaki Chicken Bowl</div>
+        <div class="menu-card-desc">Steamed rice, grilled chicken, teriyaki sauce, sesame</div>
+        <div class="menu-card-footer">
+          <span class="menu-price">Rp 45.000</span>
+          <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card reveal">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&q=80" alt="Green Detox Juice" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Green Detox Juice'">
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-cat">Drinks</div>
+        <div class="menu-card-name">Green Detox Juice</div>
+        <div class="menu-card-desc">Spinach, apple, ginger, lemon, cucumber blend</div>
+        <div class="menu-card-footer">
+          <span class="menu-price">Rp 28.000</span>
+          <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-card reveal">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80" alt="Overnight Oats" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Overnight Oats'">
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-cat">Snack</div>
+        <div class="menu-card-name">Overnight Oats</div>
+        <div class="menu-card-desc">Rolled oats, chia seeds, almond milk, mixed berries</div>
+        <div class="menu-card-footer">
+          <span class="menu-price">Rp 32.000</span>
+          <button class="btn-add"><i data-lucide="plus" width="16" height="16"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUNDLES -->
+<section id="bundles">
+  <div class="reveal" style="text-align:center;margin-bottom:48px;">
+    <div class="section-tag" style="display:inline-block;">Bundle Deals</div>
+    <h2 class="section-title">Save More with Bundles</h2>
+    <p class="section-desc" style="margin:0 auto 0;">Get more value with our specially curated meal bundles.</p>
+  </div>
+
+  <div class="bundles-grid">
+    <div class="bundle-card reveal">
+      <div class="bundle-img">
+        <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80" alt="Healthy Starter Bundle" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Healthy Starter Bundle'">
+      </div>
+      <div class="bundle-body">
+        <div class="bundle-name">Healthy Starter</div>
+        <div class="bundle-desc">Perfect for a light & nutritious meal to kickstart your day.</div>
+        <div class="bundle-items">
+          <span class="bundle-item-tag">Garden Salad</span>
+          <span class="bundle-item-tag">Detox Juice</span>
+          <span class="bundle-item-tag">Overnight Oats</span>
+        </div>
+        <div class="bundle-footer">
+          <div>
+            <div class="bundle-price-main">Rp 79.000</div>
+            <div class="bundle-price-save"><s>Rp 95.000</s> Save 16%</div>
+          </div>
+          <button class="btn-bundle">Order Bundle</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bundle-card featured-bundle reveal">
+      <div class="bundle-popular">Most Popular</div>
+      <div class="bundle-img">
+        <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&q=80" alt="Full Day Pack" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Full Day Pack'">
+      </div>
+      <div class="bundle-body">
+        <div class="bundle-name">Full Day Pack</div>
+        <div class="bundle-desc">Complete nutrition for your entire day. Breakfast, lunch & drink included.</div>
+        <div class="bundle-items">
+          <span class="bundle-item-tag">Overnight Oats</span>
+          <span class="bundle-item-tag">Chicken Bowl</span>
+          <span class="bundle-item-tag">Detox Juice</span>
+          <span class="bundle-item-tag">Garden Salad</span>
+        </div>
+        <div class="bundle-footer">
+          <div>
+            <div class="bundle-price-main">Rp 125.000</div>
+            <div class="bundle-price-save"><s>Rp 140.000</s> Save 11%</div>
+          </div>
+          <button class="btn-bundle">Order Bundle</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bundle-card reveal">
+      <div class="bundle-img">
+        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="Family Pack" onerror="this.src='https://placehold.co/400x300/dcfce7/16a34a?text=Family Pack'">
+      </div>
+      <div class="bundle-body">
+        <div class="bundle-name">Family Pack</div>
+        <div class="bundle-desc">Feed the whole family with our hearty bundle. Serves 2–3 people.</div>
+        <div class="bundle-items">
+          <span class="bundle-item-tag">2× Chicken Bowl</span>
+          <span class="bundle-item-tag">2× Salad</span>
+          <span class="bundle-item-tag">2× Juice</span>
+        </div>
+        <div class="bundle-footer">
+          <div>
+            <div class="bundle-price-main">Rp 215.000</div>
+            <div class="bundle-price-save"><s>Rp 256.000</s> Save 16%</div>
+          </div>
+          <button class="btn-bundle">Order Bundle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="reveal" style="text-align:center;margin-bottom:64px;">
+    <div class="section-tag" style="display:inline-block;">Simple Process</div>
+    <h2 class="section-title">How to Order</h2>
+    <p class="section-desc" style="margin:0 auto;">Get your fresh meal in just a few simple steps.</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-item reveal">
+      <div class="step-num"><i data-lucide="utensils" width="22" height="22"></i></div>
+      <div class="step-title">Browse Menu</div>
+      <div class="step-desc">Explore our fresh daily menu and pick your favorites</div>
+    </div>
+    <div class="step-item reveal">
+      <div class="step-num"><i data-lucide="shopping-cart" width="22" height="22"></i></div>
+      <div class="step-title">Add to Cart</div>
+      <div class="step-desc">Select variants, quantities and any special notes</div>
+    </div>
+    <div class="step-item reveal">
+      <div class="step-num"><i data-lucide="credit-card" width="22" height="22"></i></div>
+      <div class="step-title">Checkout</div>
+      <div class="step-desc">Choose delivery or pickup, pay securely via Midtrans</div>
+    </div>
+    <div class="step-item reveal">
+      <div class="step-num"><i data-lucide="smile" width="22" height="22"></i></div>
+      <div class="step-title">Enjoy!</div>
+      <div class="step-desc">Your fresh meal arrives at your door in 30 minutes</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Greens & Co.</div>
+      <p class="footer-tagline">Fresh, healthy food delivered to your door. Made with love from locally sourced ingredients every single day.</p>
+      <div class="footer-social">
+        <div class="social-btn"><i data-lucide="instagram" width="16" height="16"></i></div>
+        <div class="social-btn"><i data-lucide="twitter" width="16" height="16"></i></div>
+        <div class="social-btn"><i data-lucide="facebook" width="16" height="16"></i></div>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Menu</div>
+      <div class="footer-links">
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> All Menu</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> Salads</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> Rice Bowls</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> Drinks</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> Bundles</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Info</div>
+      <div class="footer-links">
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> About Us</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> How It Works</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> Delivery Area</a>
+        <a href="#"><i data-lucide="chevron-right" width="12" height="12"></i> FAQ</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-links">
+        <a href="#"><i data-lucide="map-pin" width="12" height="12"></i> Bandung, Indonesia</a>
+        <a href="#"><i data-lucide="phone" width="12" height="12"></i> +62 812-3456-7890</a>
+        <a href="#"><i data-lucide="mail" width="12" height="12"></i> hello@greensco.id</a>
+        <a href="#"><i data-lucide="clock" width="12" height="12"></i> 07:00 – 21:00 WIB</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Greens & Co. All rights reserved.</span>
+    <span class="footer-copy">Made with love in Bandung</span>
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if(e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
