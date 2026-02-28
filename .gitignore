@@ -1,22 +1,61 @@
-# dependencies
+# ─── Dependencies ────────────────────────────────────────────────
 node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
 
-# next build output
+# ─── Next.js build output ────────────────────────────────────────
 .next/
 out/
+build/
+dist/
 
-# environment
+# ─── Environment ─────────────────────────────────────────────────
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# logs
+# ─── Logs ────────────────────────────────────────────────────────
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
 
-# typescript
-tsconfig.tsbuildinfo
+# ─── TypeScript ──────────────────────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
+# ─── Testing ─────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── Cache ───────────────────────────────────────────────────────
+.cache/
+.turbo/
+.vercel/
+.eslintcache
+.stylelintcache
+*.swp
+*.swo
+
+# ─── OS ──────────────────────────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ─── Editor ──────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

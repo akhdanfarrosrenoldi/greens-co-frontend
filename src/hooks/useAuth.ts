@@ -33,7 +33,7 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     const res = await apiLogin({ email, password })
-    const { token, user: userData } = res.data.data
+    const { token, user: userData } = res.data
     saveToken(token)
     saveUser(userData)
     setUser(userData)
@@ -45,7 +45,7 @@ export function useAuth() {
 
   const register = async (name: string, email: string, password: string) => {
     const res = await apiRegister({ name, email, password })
-    const { token, user: userData } = res.data.data
+    const { token, user: userData } = res.data
     saveToken(token)
     saveUser(userData)
     setUser(userData)
