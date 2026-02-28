@@ -11,10 +11,10 @@ interface ProductCardProps {
   product: Product
 }
 
-const BADGE_CONFIG = {
-  bestseller: { label: 'Best Seller', className: 'bg-green-DEFAULT' },
-  new: { label: 'New', className: 'bg-amber-400' },
-  promo: { label: 'Promo', className: 'bg-red-500' },
+const BADGE_CONFIG: Record<string, { label: string; bg: string }> = {
+  bestseller: { label: 'Best Seller', bg: '#16a34a' },
+  new: { label: 'New', bg: '#f59e0b' },
+  promo: { label: 'Promo', bg: '#ef4444' },
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -57,11 +57,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
         {/* Badge */}
         {badge && (
-          <span
-            className={`absolute top-[10px] left-[10px] ${badge.className} text-white text-[11px] font-semibold px-2.5 py-[3px] rounded-full pointer-events-none`}
-          >
+          <div style={{ position: 'absolute', top: 10, left: 10, background: badge.bg, color: 'white', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 100, pointerEvents: 'none' }}>
             {badge.label}
-          </span>
+          </div>
         )}
         {/* Wishlist — always visible */}
         <button
@@ -74,7 +72,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <div className="p-[14px]">
         {/* Category */}
-        <p className="text-[11px] text-green-DEFAULT font-semibold uppercase tracking-[1px] mb-1">
+        <p style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>
           {product.category.name}
         </p>
         {/* Name */}
@@ -107,7 +105,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Footer: price + add button */}
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-[17px] font-bold text-green-DEFAULT">
+            <span style={{ fontSize: 17, fontWeight: 700, color: '#16a34a' }}>
               {formatRupiah(product.basePrice)}
             </span>
             {product.originalPrice && product.originalPrice > product.basePrice && (
@@ -127,7 +125,10 @@ export default function ProductCard({ product }: ProductCardProps) {
                 qty: 1,
               })
             }
-            className="w-[34px] h-[34px] bg-green-DEFAULT text-white rounded-full flex items-center justify-center hover:bg-green-dark hover:scale-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+            style={{ width: 34, height: 34, background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s, transform 0.2s' }}
+            className="disabled:opacity-40 disabled:cursor-not-allowed"
+            onMouseEnter={e => { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'scale(1.1)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#16a34a'; e.currentTarget.style.transform = 'scale(1)' }}
           >
             <Plus size={16} />
           </button>

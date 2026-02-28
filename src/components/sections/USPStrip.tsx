@@ -1,19 +1,19 @@
 import { Truck, Leaf, Heart, Package } from 'lucide-react'
 
 const items = [
-  { icon: Truck, text: 'Fast Delivery (30 min)' },
-  { icon: Leaf, text: 'Fresh Local Ingredients' },
-  { icon: Heart, text: 'Healthy & Nutritious' },
-  { icon: Package, text: 'Free Pickup Available' },
+  { icon: Truck,   label: 'Fast Delivery (30 min)' },
+  { icon: Leaf,    label: 'Fresh Local Ingredients' },
+  { icon: Heart,   label: 'Healthy & Nutritious' },
+  { icon: Package, label: 'Free Pickup Available' },
 ]
 
 export default function USPStrip() {
   return (
-    <div className="bg-green-DEFAULT px-8 md:px-16 py-[18px] flex flex-wrap justify-center gap-16">
-      {items.map(({ icon: Icon, text }) => (
-        <div key={text} className="flex items-center gap-2 text-white text-sm font-medium">
-          <Icon size={16} />
-          {text}
+    <div style={{ background: '#16a34a', padding: '18px 64px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 64 }}>
+      {items.map(({ icon: Icon, label }) => (
+        <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#ffffff', fontSize: 14, fontWeight: 500 }}>
+          <Icon size={16} color="#ffffff" />
+          {label}
         </div>
       ))}
     </div>

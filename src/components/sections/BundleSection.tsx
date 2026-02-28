@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import { formatRupiah } from '@/lib/utils'
 
 const BUNDLES = [
@@ -40,13 +39,7 @@ const BUNDLES = [
 export default function BundleSection() {
   return (
     <section id="bundles" className="px-8 md:px-16 py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-12"
-      >
+      <div className="reveal text-center mb-12">
         <span className="section-tag">Bundle Deals</span>
         <h2 className="font-heading text-[clamp(28px,4vw,42px)] font-bold leading-tight mb-3">
           Save More with Bundles
@@ -54,21 +47,17 @@ export default function BundleSection() {
         <p className="text-[15px] text-muted max-w-[480px] mx-auto leading-relaxed">
           Get more value with our specially curated meal bundles.
         </p>
-      </motion.div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {BUNDLES.map((bundle, i) => {
+        {BUNDLES.map((bundle) => {
           const savePct = Math.round(
             ((bundle.originalPrice - bundle.price) / bundle.originalPrice) * 100
           )
           return (
-            <motion.div
+            <div
               key={bundle.id}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.12 }}
-              className={`group bg-white rounded-[20px] border overflow-hidden hover:-translate-y-1.5 hover:shadow-[0_20px_48px_rgba(0,0,0,0.1)] transition-all cursor-pointer relative ${
+              className={`reveal group bg-white rounded-[20px] border overflow-hidden hover:-translate-y-1.5 hover:shadow-[0_20px_48px_rgba(0,0,0,0.1)] transition-all cursor-pointer relative ${
                 bundle.isPopular
                   ? 'border-green-DEFAULT shadow-[0_0_0_2px_rgba(22,163,74,0.15)]'
                   : 'border-[#e5e7eb]'
@@ -102,22 +91,24 @@ export default function BundleSection() {
                 </div>
                 <div className="flex items-center justify-between pt-4 border-t border-[#e5e7eb]">
                   <div>
-                    <p className="text-xl font-bold text-green-DEFAULT">
+                    <p style={{ fontSize: 20, fontWeight: 700, color: '#16a34a' }}>
                       {formatRupiah(bundle.price)}
                     </p>
-                    <p className="text-xs text-muted mt-0.5">
-                      <s>{formatRupiah(bundle.originalPrice)}</s>
-                      <span className="ml-1 text-green-DEFAULT font-medium">
-                        Save {savePct}%
-                      </span>
+                    <p style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>
+                      <s style={{ marginRight: 4 }}>{formatRupiah(bundle.originalPrice)}</s>
+                      Save {savePct}%
                     </p>
                   </div>
-                  <button className="px-5 py-2.5 bg-green-DEFAULT text-white rounded-full text-xs font-semibold font-body hover:bg-green-dark hover:-translate-y-px transition-all">
+                  <button
+                    style={{ padding: '10px 20px', background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: 100, fontFamily: 'DM Sans, sans-serif', fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s, transform 0.2s', whiteSpace: 'nowrap' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#16a34a'; e.currentTarget.style.transform = 'translateY(0)' }}
+                  >
                     Order Bundle
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )
         })}
       </div>

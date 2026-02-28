@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 import DataTable from '@/components/admin/DataTable'
+import BundleForm from '@/components/admin/BundleForm'
 import { Bundle } from '@/types'
 import { adminGetBundles, adminDeleteBundle } from '@/lib/api'
 import { formatRupiah } from '@/lib/utils'
@@ -28,13 +29,17 @@ const MOCK: Bundle[] = [
 export default function AdminBundlesPage() {
   const [bundles, setBundles] = useState<Bundle[]>([])
   const [loading, setLoading] = useState(true)
+  const [formOpen, setFormOpen] = useState(false)
+  const [editBundle, setEditBundle] = useState<Bundle | null>(null)
 
-  useEffect(() => {
+  const loadBundles = () => {
     adminGetBundles()
       .then((res) => setBundles(res.data.data ?? res.data))
       .catch(() => setBundles(MOCK))
       .finally(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(() => { loadBundles() }, [])
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this bundle?')) return
@@ -45,6 +50,11 @@ export default function AdminBundlesPage() {
       alert('Failed to delete bundle.')
     }
   }
+
+  const openAdd = () => { setEditBundle(null); setFormOpen(true) }
+  const openEdit = (b: Bundle) => { setEditBundle(b); setFormOpen(true) }
+  const closeForm = () => { setFormOpen(false); setEditBundle(null) }
+  const handleSaved = () => { closeForm(); loadBundles() }
 
   const columns = [
     {
@@ -57,26 +67,14 @@ export default function AdminBundlesPage() {
       ),
     },
     { key: 'name', header: 'Name' },
-    {
-      key: 'price',
-      header: 'Price',
-      render: (row: Bundle) => formatRupiah(row.price),
-    },
-    {
-      key: 'originalPrice',
-      header: 'Original',
-      render: (row: Bundle) => (
-        <s className="text-muted">{formatRupiah(row.originalPrice)}</s>
-      ),
-    },
+    { key: 'price', header: 'Price', render: (row: Bundle) => formatRupiah(row.price) },
+    { key: 'originalPrice', header: 'Original', render: (row: Bundle) => <s className="text-muted">{formatRupiah(row.originalPrice)}</s> },
     {
       key: 'isPopular',
       header: 'Popular',
       render: (row: Bundle) =>
         row.isPopular ? (
-          <span className="text-xs bg-[#dcfce7] text-[#15803d] px-2 py-0.5 rounded-full font-medium">
-            Yes
-          </span>
+          <span className="text-xs bg-[#dcfce7] text-[#15803d] px-2 py-0.5 rounded-full font-medium">Yes</span>
         ) : (
           <span className="text-xs text-muted">No</span>
         ),
@@ -86,13 +84,14 @@ export default function AdminBundlesPage() {
       header: 'Actions',
       render: (row: Bundle) => (
         <div className="flex gap-2">
-          <button className="w-8 h-8 rounded-lg border border-[#e5e7eb] flex items-center justify-center hover:border-green-DEFAULT hover:text-green-DEFAULT transition-colors">
+          <button
+            onClick={() => openEdit(row)}
+            className="w-8 h-8 rounded-lg border border-[#e5e7eb] flex items-center justify-center hover:border-green-DEFAULT hover:text-green-DEFAULT transition-colors">
             <Pencil size={14} />
           </button>
           <button
             onClick={() => handleDelete(row.id)}
-            className="w-8 h-8 rounded-lg border border-[#e5e7eb] flex items-center justify-center hover:border-red-500 hover:text-red-500 transition-colors"
-          >
+            className="w-8 h-8 rounded-lg border border-[#e5e7eb] flex items-center justify-center hover:border-red-500 hover:text-red-500 transition-colors">
             <Trash2 size={14} />
           </button>
         </div>
@@ -107,13 +106,24 @@ export default function AdminBundlesPage() {
           <h1 className="font-heading text-2xl font-bold">Bundles</h1>
           <p className="text-sm text-muted mt-1">Manage meal bundle deals</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-green-DEFAULT text-white rounded-full text-sm font-semibold hover:bg-green-dark transition-colors">
+        <button
+          onClick={openAdd}
+          className="flex items-center gap-2 px-5 py-2.5 bg-green-DEFAULT text-white rounded-full text-sm font-semibold hover:bg-green-dark transition-colors">
           <Plus size={16} />
           Add Bundle
         </button>
       </div>
 
       <DataTable columns={columns as never} data={bundles as never} loading={loading} />
+
+      {formOpen && (
+        <BundleForm
+          bundle={editBundle}
+          onClose={closeForm}
+          onSaved={handleSaved}
+        />
+      )}
     </div>
   )
 }
+

@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Plus } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { useCart } from '@/hooks/useCart'
 import { formatRupiah } from '@/lib/utils'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const FEATURED = [
   {
@@ -16,8 +17,7 @@ const FEATURED = [
     description: 'Mixed greens, cherry tomato, cucumber, house dressing',
     price: 35000,
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
-    badge: 'Best Seller',
-    badgeColor: 'bg-green-DEFAULT',
+    badge: 'bestseller',
     rating: 4.9,
   },
   {
@@ -28,8 +28,7 @@ const FEATURED = [
     description: 'Steamed rice, grilled chicken, teriyaki sauce, sesame',
     price: 45000,
     image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80',
-    badge: 'New',
-    badgeColor: 'bg-amber-400',
+    badge: 'new',
     rating: 4.8,
   },
   {
@@ -41,7 +40,6 @@ const FEATURED = [
     price: 28000,
     image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&q=80',
     badge: null,
-    badgeColor: '',
     rating: 4.7,
   },
   {
@@ -53,13 +51,14 @@ const FEATURED = [
     price: 32000,
     image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80',
     badge: null,
-    badgeColor: '',
     rating: 4.8,
   },
 ]
 
 export default function FeaturedMenu() {
   const { addToCart } = useCart()
+  const [btnHovered, setBtnHovered] = useState(false)
+  useScrollReveal()
 
   return (
     <section className="bg-[#f9fafb] px-8 md:px-16 py-24">
@@ -73,24 +72,31 @@ export default function FeaturedMenu() {
             Freshly prepared every morning. Limited stock available daily.
           </p>
         </div>
-        <Link
-          href="/menu"
-          className="flex items-center gap-1.5 text-green-DEFAULT text-sm font-semibold mt-4 md:mt-0 hover:gap-3 transition-all"
+        <button
+          onClick={() => { window.location.href = '/menu' }}
+          onMouseEnter={() => setBtnHovered(true)}
+          onMouseLeave={() => setBtnHovered(false)}
+          style={{
+            color: '#16a34a',
+            fontSize: 14, fontWeight: 600,
+            background: 'none', border: 'none',
+            display: 'flex', alignItems: 'center',
+            gap: btnHovered ? 10 : 6,
+            transition: 'gap 0.2s',
+            cursor: 'pointer',
+            marginTop: 0,
+          }}
         >
           View All Menu
           <ArrowRight size={14} />
-        </Link>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {FEATURED.map((item, i) => (
-          <motion.div
+        {FEATURED.map((item) => (
+          <div
             key={item.id}
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="bg-white rounded-2xl overflow-hidden border border-[#e5e7eb] hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(0,0,0,0.1)] transition-all duration-200 cursor-pointer group"
+            className="reveal bg-white rounded-2xl overflow-hidden border border-[#e5e7eb] hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(0,0,0,0.1)] transition-all duration-200 cursor-pointer group"
           >
             <Link href={`/menu/${item.slug}`}>
               <div className="h-[200px] relative overflow-hidden">
@@ -100,17 +106,20 @@ export default function FeaturedMenu() {
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                {item.badge && (
-                  <span
-                    className={`absolute top-3 left-3 ${item.badgeColor} text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full`}
-                  >
-                    {item.badge}
-                  </span>
+                {item.badge === 'bestseller' && (
+                  <div style={{ position: 'absolute', top: 12, left: 12, background: '#16a34a', color: 'white', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 100 }}>
+                    Best Seller
+                  </div>
+                )}
+                {item.badge === 'new' && (
+                  <div style={{ position: 'absolute', top: 12, left: 12, background: '#f59e0b', color: 'white', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 100 }}>
+                    New
+                  </div>
                 )}
               </div>
             </Link>
             <div className="p-4">
-              <p className="text-[11px] text-green-DEFAULT font-semibold uppercase tracking-[1px] mb-1.5">
+              <p style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>
                 {item.category}
               </p>
               <Link href={`/menu/${item.slug}`}>
@@ -120,7 +129,7 @@ export default function FeaturedMenu() {
               </Link>
               <p className="text-[13px] text-muted leading-[1.5] mb-4">{item.description}</p>
               <div className="flex items-center justify-between">
-                <span className="text-[17px] font-bold text-green-DEFAULT">
+                <span style={{ fontSize: 17, fontWeight: 700, color: '#16a34a' }}>
                   {formatRupiah(item.price)}
                 </span>
                 <button
@@ -133,13 +142,15 @@ export default function FeaturedMenu() {
                       qty: 1,
                     })
                   }
-                  className="w-[34px] h-[34px] bg-green-DEFAULT text-white rounded-full flex items-center justify-center hover:bg-green-dark hover:scale-110 transition-all"
+                  style={{ width: 34, height: 34, background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s, transform 0.2s' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'scale(1.1)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#16a34a'; e.currentTarget.style.transform = 'scale(1)' }}
                 >
                   <Plus size={16} />
                 </button>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

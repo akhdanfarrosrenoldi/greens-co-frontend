@@ -14,6 +14,7 @@ export function useAuth() {
     if (token) {
       const saved = getSavedUser() as User | null
       if (saved) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(saved)
         setLoading(false)
       } else {
@@ -36,6 +37,9 @@ export function useAuth() {
     saveToken(token)
     saveUser(userData)
     setUser(userData)
+    // Set cookies for middleware route protection
+    document.cookie = `token=${token}; path=/; max-age=86400`
+    document.cookie = `role=${(userData as User).role?.toLowerCase() ?? 'user'}; path=/; max-age=86400`
     return userData as User
   }
 
@@ -45,12 +49,18 @@ export function useAuth() {
     saveToken(token)
     saveUser(userData)
     setUser(userData)
+    // Set cookies for middleware route protection
+    document.cookie = `token=${token}; path=/; max-age=86400`
+    document.cookie = `role=${(userData as User).role?.toLowerCase() ?? 'user'}; path=/; max-age=86400`
     return userData as User
   }
 
   const logout = () => {
     removeToken()
     setUser(null)
+    // Clear middleware cookies
+    document.cookie = 'token=; path=/; max-age=0'
+    document.cookie = 'role=; path=/; max-age=0'
   }
 
   return { user, loading, login, register, logout }

@@ -32,14 +32,20 @@ export default function Footer() {
             Menu
           </div>
           <div className="flex flex-col gap-2.5">
-            {['All Menu', 'Salads', 'Rice Bowls', 'Drinks', 'Bundles'].map((item) => (
+            {[
+              { label: 'All Menu',   href: '/menu' },
+              { label: 'Salads',     href: '/menu?cat=salad' },
+              { label: 'Rice Bowls', href: '/menu?cat=bowl' },
+              { label: 'Drinks',     href: '/menu?cat=drinks' },
+              { label: 'Bundles',    href: '/#bundles' },
+            ].map(({ label, href }) => (
               <Link
-                key={item}
-                href="/menu"
+                key={label}
+                href={href}
                 className="text-sm text-[#d1d5db] hover:text-green-DEFAULT transition-colors flex items-center gap-2"
               >
                 <ChevronRight size={12} />
-                {item}
+                {label}
               </Link>
             ))}
           </div>

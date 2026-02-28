@@ -1,14 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Truck, Store, Loader2 } from 'lucide-react'
+import { Truck, Store, Loader2, MapPin, Phone, User, FileText, Clock, CreditCard, ShieldCheck } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 import { formatRupiah } from '@/lib/utils'
 import { createOrder, initiatePayment } from '@/lib/api'
 import { CheckoutForm } from '@/types'
 
 const DELIVERY_FEE = 10000
+const FREE_DELIVERY_THRESHOLD = 100000
+
+const PICKUP_TIMES = Array.from({ length: 13 }, (_, i) => {
+  const h = (8 + i).toString().padStart(2, '0')
+  return `${h}:00`
+})
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart()
@@ -25,7 +32,9 @@ export default function CheckoutPage() {
   const [error, setError] = useState('')
 
   const isDelivery = form.type === 'DELIVERY'
-  const total = totalPrice + (isDelivery ? DELIVERY_FEE : 0)
+  const isFreeDelivery = !isDelivery || totalPrice >= FREE_DELIVERY_THRESHOLD
+  const deliveryFee = isDelivery && totalPrice < FREE_DELIVERY_THRESHOLD ? DELIVERY_FEE : 0
+  const total = totalPrice + deliveryFee
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
@@ -70,91 +79,117 @@ export default function CheckoutPage() {
           <div className="space-y-6">
             {/* Delivery / Pickup Toggle */}
             <div className="bg-white rounded-2xl border border-[#e5e7eb] p-6">
-              <p className="text-sm font-semibold mb-4">Order Type</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-xs font-semibold text-muted uppercase tracking-[1px] mb-4">Order Type</p>
+              <div className="inline-flex rounded-full border border-[#e5e7eb] p-1 bg-[#f9fafb] gap-1">
                 {(['DELIVERY', 'PICKUP'] as const).map((type) => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setForm((f) => ({ ...f, type }))}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                    className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all ${
                       form.type === type
-                        ? 'border-green-DEFAULT bg-[#f0fdf4] text-green-DEFAULT'
-                        : 'border-[#e5e7eb] hover:border-green-DEFAULT'
+                        ? 'bg-green-DEFAULT text-white shadow-sm'
+                        : 'text-muted hover:text-[#111827]'
                     }`}
                   >
-                    {type === 'DELIVERY' ? <Truck size={20} /> : <Store size={20} />}
+                    {type === 'DELIVERY' ? <Truck size={15} /> : <Store size={15} />}
                     {type === 'DELIVERY' ? 'Delivery' : 'Pickup'}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Customer Info */}
+            {/* Delivery Details */}
             <div className="bg-white rounded-2xl border border-[#e5e7eb] p-6 space-y-4">
-              <p className="text-sm font-semibold">Contact Information</p>
+              <p className="text-xs font-semibold text-muted uppercase tracking-[1px]">
+                {isDelivery ? 'Delivery Details' : 'Pickup Details'}
+              </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-muted block mb-1.5">
                     Full Name <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Your full name"
-                    className="w-full px-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
-                  />
+                  <div className="relative">
+                    <User size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Your full name"
+                      className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted block mb-1.5">
                     Phone <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="+62..."
-                    className="w-full px-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
-                  />
+                  <div className="relative">
+                    <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                    <input
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="+62..."
+                      className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
+                    />
+                  </div>
                 </div>
               </div>
 
               {isDelivery ? (
                 <div>
                   <label className="text-xs font-medium text-muted block mb-1.5">
-                    Delivery Address <span className="text-red-500">*</span>
+                    Full Address <span className="text-red-500">*</span>
                   </label>
-                  <textarea
-                    name="address"
-                    value={form.address}
-                    onChange={handleChange}
-                    rows={3}
-                    placeholder="Full delivery address..."
-                    className="w-full px-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors resize-none"
-                  />
+                  <div className="relative">
+                    <MapPin size={14} className="absolute left-3.5 top-3.5 text-muted pointer-events-none" />
+                    <textarea
+                      name="address"
+                      value={form.address}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="Full delivery address..."
+                      className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors resize-none"
+                    />
+                  </div>
                 </div>
               ) : (
-                <div>
-                  <label className="text-xs font-medium text-muted block mb-1.5">
-                    Pickup Time
-                  </label>
-                  <input
-                    type="time"
-                    name="pickupTime"
-                    value={form.pickupTime}
-                    onChange={handleChange}
-                    min="07:00"
-                    max="21:00"
-                    className="w-full px-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
-                  />
-                  <p className="text-xs text-muted mt-1.5">Available: 07:00 – 21:00 WIB</p>
-                </div>
+                <>
+                  <div>
+                    <label className="text-xs font-medium text-muted block mb-1.5">
+                      Pickup Time
+                    </label>
+                    <div className="relative">
+                      <Clock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+                      <select
+                        name="pickupTime"
+                        value={form.pickupTime}
+                        onChange={handleChange}
+                        className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-white appearance-none"
+                      >
+                        <option value="">Select pickup time...</option>
+                        {PICKUP_TIMES.map((t) => (
+                          <option key={t} value={t}>{t} WIB</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-4 py-3">
+                    <MapPin size={16} className="text-green-DEFAULT mt-0.5 shrink-0" />
+                    <p className="text-sm text-[#15803d]">
+                      <span className="font-semibold">Pickup at our store:</span> Jl. Contoh No.1, Bandung — Open 08:00–20:00 WIB
+                    </p>
+                  </div>
+                </>
               )}
 
               <div>
                 <label className="text-xs font-medium text-muted block mb-1.5">
-                  Order Notes (optional)
+                  <span className="flex items-center gap-1.5">
+                    <FileText size={12} />
+                    Order Notes (optional)
+                  </span>
                 </label>
                 <textarea
                   name="notes"
@@ -168,7 +203,7 @@ export default function CheckoutPage() {
             </div>
 
             {error && (
-              <p className="text-sm text-red-500 bg-red-50 px-4 py-3 rounded-xl">{error}</p>
+              <p className="text-sm text-red-500 bg-red-50 border border-red-100 px-4 py-3 rounded-xl">{error}</p>
             )}
           </div>
 
@@ -176,16 +211,20 @@ export default function CheckoutPage() {
           <div className="h-fit sticky top-24 space-y-4">
             <div className="bg-white rounded-2xl border border-[#e5e7eb] p-6">
               <h2 className="font-heading text-lg font-bold mb-4">Order Summary</h2>
-              <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
+              <div className="space-y-3 mb-4 max-h-52 overflow-y-auto">
                 {items.map((i) => (
                   <div
                     key={`${i.productId}-${i.variantId}`}
-                    className="flex justify-between text-sm"
+                    className="flex items-center gap-3"
                   >
-                    <span className="text-muted truncate max-w-[180px]">
-                      {i.name} x{i.qty}
-                    </span>
-                    <span className="font-medium shrink-0">{formatRupiah(i.price * i.qty)}</span>
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0">
+                      <Image src={i.image} alt={i.name} fill className="object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-[#111827] truncate">{i.name}</p>
+                      <p className="text-xs text-muted">x{i.qty}</p>
+                    </div>
+                    <span className="text-sm font-semibold shrink-0">{formatRupiah(i.price * i.qty)}</span>
                   </div>
                 ))}
               </div>
@@ -197,7 +236,9 @@ export default function CheckoutPage() {
                 {isDelivery && (
                   <div className="flex justify-between text-sm">
                     <span className="text-muted">Delivery</span>
-                    <span>{formatRupiah(DELIVERY_FEE)}</span>
+                    <span className={isFreeDelivery ? 'text-green-DEFAULT font-medium' : ''}>
+                      {isFreeDelivery ? 'Free' : formatRupiah(DELIVERY_FEE)}
+                    </span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-base border-t border-[#e5e7eb] pt-2 mt-2">
@@ -210,11 +251,20 @@ export default function CheckoutPage() {
             <button
               type="submit"
               disabled={loading || items.length === 0}
-              className="w-full flex items-center justify-center gap-2 py-4 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark transition-all hover:-translate-y-px shadow-[0_4px_16px_rgba(22,163,74,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 py-4 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark hover:-translate-y-0.5 transition-all shadow-[0_4px_16px_rgba(22,163,74,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading && <Loader2 size={16} className="animate-spin" />}
+              {loading ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <CreditCard size={16} />
+              )}
               Pay Now — {formatRupiah(total)}
             </button>
+
+            <div className="flex items-center justify-center gap-2 text-xs text-muted">
+              <ShieldCheck size={13} className="text-green-DEFAULT" />
+              Secured by Midtrans
+            </div>
           </div>
         </form>
       </div>

@@ -75,6 +75,7 @@ function MenuContent() {
   const LIMIT = 9
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
     Promise.all([
       getProducts(Object.fromEntries(params.entries())).catch(() => null),

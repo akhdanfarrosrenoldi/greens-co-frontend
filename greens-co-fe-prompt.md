@@ -340,3 +340,209 @@ NEXT_PUBLIC_API_URL=http://localhost:8080/api
 
 
 untuk Deasing checn greenco html dan ubah ke versi next js
+
+
+---
+
+## DESIGN SPEC — Exact Values from HTML Prototype
+
+> Referensi: `greens-co-v2.html` (home) & `greens-co-menu.html` (menu page).
+> Semua nilai di bawah adalah **exact** — JANGAN gunakan nilai perkiraan.
+
+---
+
+### Design Tokens
+
+| CSS var | Hex | Tailwind |
+|---|---|---|
+| `--green` | `#16a34a` | `text-green-DEFAULT` / `bg-green-DEFAULT` |
+| `--green-dark` | `#15803d` | `text-green-dark` / `bg-green-dark` |
+| `--muted` (HTML) | `#9ca3af` | `text-muted-light` (placeholder, ikon sekunder) |
+| `--muted2` (HTML) | `#6b7280` | `text-muted` (body text, nav links, deskripsi) |
+| `--border` | `#e5e7eb` | |
+
+---
+
+### Navbar (`components/layout/Navbar.tsx`)
+
+```css
+padding: 16px 64px;                  -> px-16 py-4
+background: rgba(255,255,255,0.92)   -> bg-white/[.92]
+backdrop-filter: blur(16px)          -> backdrop-blur-md
+
+/* Nav links */
+color: var(--muted2) = #6b7280       -> text-muted
+hover: color: var(--green)           -> hover:text-green-DEFAULT
+gap between links: 32px              -> gap-8
+
+/* .btn-nav (Order Now) */
+padding: 10px 22px                   -> py-2.5 px-[22px]
+icon: Zap (BUKAN Leaf!)
+hover: background->green-dark + translateY(-1px)
+       -> hover:bg-green-dark hover:-translate-y-px transition-all
+```
+
+---
+
+### Hero (`components/sections/Hero.tsx`)
+
+```css
+padding: 100px 64px 64px             -> pt-[100px] pb-16 px-8 md:px-16
+gap: 64px                            -> gap-16
+
+.hero-desc: line-height: 1.8         -> leading-[1.8]  (BUKAN leading-relaxed!)
+.stat-label: font-size: 13px         -> text-[13px]    (BUKAN text-xs!)
+.stat-num: font-size: 28px           -> text-[28px]
+
+.btn-primary hover:
+  translateY(-2px) + shadow 0 8px 24px rgba(22,163,74,0.35)
+  -> hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,163,74,0.35)]
+
+.btn-secondary hover:
+  border->green + color->green + translateY(-2px)
+  -> hover:border-green-DEFAULT hover:text-green-DEFAULT hover:-translate-y-0.5
+```
+
+---
+
+### USP Strip (`components/sections/USPStrip.tsx`)
+
+```css
+padding: 18px 64px  -> py-[18px] px-8 md:px-16
+gap: 64px           -> gap-16   (BUKAN gap-10!)
+```
+
+Teks exact: "Fast Delivery (30 min)" | "Fresh Local Ingredients" | "Healthy & Nutritious" | "Free Pickup Available"
+
+---
+
+### Featured Menu (`components/sections/FeaturedMenu.tsx`)
+
+```css
+.menu-card: transition 0.2s          -> duration-200
+image hover: card="group", img="group-hover:scale-105"
+
+.menu-card-cat: letter-spacing:1px   -> tracking-[1px]
+                margin-bottom:6px    -> mb-1.5
+
+.menu-card-desc: font-size:13px      -> text-[13px]   (BUKAN text-xs!)
+                 line-height:1.5     -> leading-[1.5]
+
+TIDAK ADA star rating di FeaturedMenu cards!
+
+.btn-add: w-[34px] h-[34px]
+hover: background->green-dark + scale(1.1)
+```
+
+---
+
+### Bundle Section (`components/sections/BundleSection.tsx`)
+
+```css
+image hover WAJIB group pattern!
+card: className="... group"
+img: className="... group-hover:scale-105"  (BUKAN hover:scale-105!)
+
+.bundle-desc: font-size:13px; line-height:1.6  -> text-[13px] leading-[1.6]  (BUKAN 1.5!)
+.btn-bundle hover: bg->green-dark + translateY(-1px)
+```
+
+---
+
+### How It Works (`components/sections/HowItWorks.tsx`)
+
+```css
+.step-desc: font-size:13px  -> text-[13px]   (BUKAN text-xs!)
+            line-height:1.6 -> leading-[1.6]
+```
+
+---
+
+### Footer (`components/layout/Footer.tsx`)
+
+```css
+.footer-col-title: letter-spacing:1px  -> tracking-[1px]   (BUKAN tracking-widest!)
+.footer-bottom: plain text SAJA — TIDAK ada ikon Leaf/Heart/lainnya!
+```
+
+---
+
+### Menu Page (`app/menu/page.tsx`)
+
+```css
+.breadcrumb: font-size:13px          -> text-[13px]   (BUKAN text-sm!)
+.page-desc: margin-bottom:32px       -> mb-8          (BUKAN mb-6!)
+pagination non-active hover:         -> hover:text-green-DEFAULT
+```
+
+---
+
+### Product Card (`components/menu/ProductCard.tsx`)
+
+```css
+hover: translateY(-4px) + shadow 0 12px 32px rgba(0,0,0,0.09)
+image hover: card="group", img="group-hover:scale-105"
+
+.product-badge: top:10px left:10px   -> top-[10px] left-[10px]
+.wishlist-btn: top:10px right:10px   -> top-[10px] right-[10px]
+              w:32px h:32px          -> w-8 h-8
+hover: color->#ef4444 + scale(1.1)   -> hover:text-red-500 hover:scale-110
+
+.product-desc: color:var(--muted2)   -> text-muted   (BUKAN text-muted-light!)
+.product-dot: 3x3px rounded span     -> <span className="w-[3px] h-[3px] rounded-full bg-muted-light" />
+              BUKAN karakter "•"!
+
+.btn-add: w-[34px] h-[34px]
+```
+
+---
+
+### Product Grid — View Toggle (`components/menu/ProductGrid.tsx`)
+
+```css
+.view-btn: width:34px height:34px border-radius:8px
+           -> w-[34px] h-[34px] rounded-lg   (BUKAN w-9 h-9 = 36px!)
+icon size: 15px
+```
+
+---
+
+### Filter Sidebar (`components/menu/FilterSidebar.tsx`)
+
+Sort options exact:
+`Most Popular` | `Newest First` | `Price: Low to High` | `Price: High to Low` | `Best Rating`
+
+---
+
+### Animasi Hover — Ringkasan Lengkap
+
+| Elemen | translateY | Box Shadow | Durasi |
+|---|---|---|---|
+| `.menu-card` (FeaturedMenu) | -6px = `-translate-y-1.5` | `0 16px 40px rgba(0,0,0,0.1)` | 0.2s |
+| `.bundle-card` | -6px = `-translate-y-1.5` | `0 20px 48px rgba(0,0,0,0.1)` | 0.2s |
+| `.product-card` (Menu page) | -4px = `-translate-y-1` | `0 12px 32px rgba(0,0,0,0.09)` | 0.2s |
+| `img` (semua card) | — | scale 1.05 | 0.4–0.5s |
+| `.btn-nav` (Order Now navbar) | -1px = `-translate-y-px` | — | 0.2s |
+| `.btn-primary` (Hero) | -2px = `-translate-y-0.5` | `0 8px 24px rgba(22,163,74,0.35)` | — |
+| `.btn-secondary` (Hero) | -2px = `-translate-y-0.5` | — | — |
+| `.btn-add` | — | scale 1.1 | 0.2s |
+| `.btn-bundle` | -1px = `-translate-y-px` | — | 0.2s |
+| `.wishlist-btn` | — | scale 1.1 | 0.2s |
+
+---
+
+### Checklist Cepat
+
+- [ ] Navbar `bg-white/[.92]` py-4 px-16
+- [ ] Nav links `text-muted` = #6b7280 (BUKAN muted-light)
+- [ ] Order Now icon = `Zap` (BUKAN `Leaf`!)
+- [ ] Hero desc `leading-[1.8]`, stat label `text-[13px]`
+- [ ] USP Strip `gap-16` (64px) `py-[18px]`
+- [ ] FeaturedMenu: NO star rating, desc `text-[13px]`, cat `tracking-[1px] mb-1.5`, card `duration-200`
+- [ ] BundleSection: card wajib `group`, img `group-hover:scale-105`, desc `leading-[1.6]`
+- [ ] HowItWorks: step desc `text-[13px] leading-[1.6]`
+- [ ] Footer: col-title `tracking-[1px]`, bottom copy plain text NO icons
+- [ ] Menu page: breadcrumb `text-[13px]`, desc `mb-8`, pagination hover `text-green-DEFAULT`
+- [ ] View toggle btns `w-[34px] h-[34px]` icon `size={15}`
+- [ ] ProductCard dot = span 3x3px (bukan "•" char), desc `text-muted` bukan `text-muted-light`
+- [ ] Filter sort: "Newest First" + "Best Rating" ada

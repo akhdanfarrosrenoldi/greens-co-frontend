@@ -25,13 +25,13 @@ export function getOrderStatusLabel(
   status: string
 ): { label: string; color: string } {
   const map: Record<string, { label: string; color: string }> = {
-    PENDING: { label: 'Pending', color: 'bg-yellow-100 text-yellow-800' },
-    PAID: { label: 'Paid', color: 'bg-blue-100 text-blue-800' },
-    PROCESSING: { label: 'Processing', color: 'bg-purple-100 text-purple-800' },
-    READY: { label: 'Ready', color: 'bg-green-100 text-green-800' },
-    ON_DELIVERY: { label: 'On Delivery', color: 'bg-orange-100 text-orange-800' },
-    COMPLETED: { label: 'Completed', color: 'bg-green-100 text-green-800' },
-    CANCELLED: { label: 'Cancelled', color: 'bg-red-100 text-red-800' },
+    PENDING:     { label: 'Pending',     color: 'bg-amber-100 text-amber-700' },
+    PAID:        { label: 'Paid',        color: 'bg-blue-100 text-blue-700' },
+    PROCESSING:  { label: 'Processing',  color: 'bg-blue-100 text-blue-700' },
+    READY:       { label: 'Ready',       color: 'bg-purple-100 text-purple-700' },
+    ON_DELIVERY: { label: 'On Delivery', color: 'bg-orange-100 text-orange-700' },
+    COMPLETED:   { label: 'Completed',   color: 'bg-[#dcfce7] text-[#15803d]' },
+    CANCELLED:   { label: 'Cancelled',   color: 'bg-red-100 text-red-700' },
   }
-  return map[status] || { label: status, color: 'bg-gray-100 text-gray-800' }
+  return map[status] || { label: status, color: 'bg-gray-100 text-gray-700' }
 }

@@ -3,6 +3,28 @@
 import { useEffect, useRef } from 'react'
 
 export function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, i) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('visible')
+            }, i * 80)
+          }
+        })
+      },
+      { threshold: 0.1 }
+    )
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [])
+}
+
+/** @deprecated Use useScrollReveal() instead — legacy single-element ref hook */
+export function useScrollRevealRef() {
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {

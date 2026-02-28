@@ -51,22 +51,12 @@ export default function CategoryTabs({ categories, totalCount }: CategoryTabsPro
           <button
             key={cat.id}
             onClick={() => handleClick(cat.slug)}
-            className={`flex items-center gap-2 px-6 py-[14px] text-sm font-medium whitespace-nowrap border-b-2 transition-all ${
-              isActive
-                ? 'text-green-DEFAULT border-green-DEFAULT font-semibold'
-                : 'text-muted border-transparent hover:text-[#111827]'
-            }`}
+            className={`cat-tab${isActive ? ' active' : ''}`}
           >
             <Icon size={14} />
             {cat.name}
             {cat.count !== undefined && (
-              <span
-                className={`text-[11px] font-semibold px-[7px] py-0.5 rounded-full transition-all ${
-                  isActive
-                    ? 'bg-green-light text-green-dark'
-                    : 'bg-surface text-muted'
-                }`}
-              >
+              <span className="cat-count">
                 {cat.count}
               </span>
             )}

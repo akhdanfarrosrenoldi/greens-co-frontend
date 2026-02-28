@@ -59,3 +59,129 @@ body {
   text-transform: uppercase;
   margin-bottom: 16px;
 }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeLeft {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* ── HERO ANIMATIONS ── */
+.hero-tag    { opacity: 0; animation: fadeUp   0.6s ease 0.1s forwards; }
+.hero-title  { opacity: 0; animation: fadeUp   0.6s ease 0.3s forwards; }
+.hero-desc   { opacity: 0; animation: fadeUp   0.6s ease 0.5s forwards; }
+.hero-cta    { opacity: 0; animation: fadeUp   0.6s ease 0.7s forwards; }
+.hero-stats  { opacity: 0; animation: fadeUp   0.6s ease 0.9s forwards; }
+.hero-visual { opacity: 0; animation: fadeLeft 0.8s ease 0.4s forwards; }
+.card-1      { animation: float 3s ease-in-out infinite; }
+.card-2      { animation: float 3s ease-in-out 1.5s infinite; }
+
+/* ── HERO DECORATIVE CIRCLE ── */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -150px; right: -150px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(22,163,74,0.07) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* ── NAVBAR SCROLLED STATE ── */
+nav.scrolled {
+  border-color: #e5e7eb !important;
+  box-shadow: 0 1px 16px rgba(0,0,0,0.06) !important;
+}
+
+/* ── HOW IT WORKS DASHED CONNECTOR ── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  position: relative;
+}
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 12%; right: 12%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #bbf7d0 0, #bbf7d0 8px,
+    transparent 8px, transparent 16px
+  );
+  z-index: 0;
+}
+.step-item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── CATEGORY TABS ── */
+.cat-tab {
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cat-tab:hover { color: #111827; }
+.cat-tab.active {
+  color: #16a34a;
+  border-bottom-color: #16a34a;
+  font-weight: 600;
+}
+.cat-count {
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+.cat-tab.active .cat-count {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* ── CUSTOM CHECKBOX ── */
+.check-box {
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  border: 2px solid #e5e7eb;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.check-item:hover .check-box { border-color: #16a34a; }
+.check-item.checked .check-box {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: white;
+}

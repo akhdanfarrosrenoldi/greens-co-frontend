@@ -45,19 +45,15 @@ function CustomCheckbox({
   label: string
 }) {
   return (
-    <label className="flex items-center gap-3 cursor-pointer group">
-      <div
-        onClick={onChange}
-        className={`w-[18px] h-[18px] rounded-[5px] border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-          checked
-            ? 'bg-green-DEFAULT border-green-DEFAULT'
-            : 'bg-white border-[#e5e7eb] group-hover:border-green-DEFAULT'
-        }`}
-      >
-        {checked && <Check size={11} className="text-white" strokeWidth={3} />}
+    <div
+      className={`check-item flex items-center gap-3 cursor-pointer${checked ? ' checked' : ''}`}
+      onClick={onChange}
+    >
+      <div className="check-box">
+        {checked && <Check size={12} />}
       </div>
       <span className="text-sm text-[#111827]">{label}</span>
-    </label>
+    </div>
   )
 }
 
