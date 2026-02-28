@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight, Zap, Leaf } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function Hero() {
   return (
@@ -111,8 +112,10 @@ export default function Hero() {
         </div>
 
         {/* Floating cards */}
-        <div
-          className="card-1 absolute bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
+        <motion.div
+          className="absolute bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           style={{ bottom: '28px', left: '-28px', display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px' }}
         >
           <div style={{ width: 40, height: 40, borderRadius: 10, background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -122,10 +125,12 @@ export default function Hero() {
             <p style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Fast Delivery</p>
             <p style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>30 mins or less</p>
           </div>
-        </div>
+        </motion.div>
 
-        <div
-          className="card-2 absolute bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
+        <motion.div
+          className="absolute bg-white rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
           style={{ top: '28px', right: '-28px', display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px' }}
         >
           <div style={{ width: 40, height: 40, borderRadius: 10, background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -135,7 +140,7 @@ export default function Hero() {
             <p style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>100% Fresh</p>
             <p style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>Local ingredients</p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

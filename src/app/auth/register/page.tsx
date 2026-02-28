@@ -4,20 +4,35 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Loader2, Eye, EyeOff, Mail, Lock, User, CheckCircle2 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
 
+const registerSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
+})
+type RegisterForm = z.infer<typeof registerSchema>
+
 export default function RegisterPage() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [serverError, setServerError] = useState('')
   const [success, setSuccess] = useState(false)
-  const { register } = useAuth()
+  const { register: registerUser } = useAuth()
   const router = useRouter()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) })
 
   useEffect(() => {
     if (success) {
@@ -26,21 +41,13 @@ export default function RegisterPage() {
     }
   }, [success, router])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!name || !email || !password || !confirm)
-      return setError('Please fill in all fields.')
-    if (password !== confirm) return setError('Passwords do not match.')
-    if (password.length < 8) return setError('Password must be at least 8 characters.')
-    setError('')
-    setLoading(true)
+  const onSubmit = async (data: RegisterForm) => {
+    setServerError('')
     try {
-      await register(name, email, password)
+      await registerUser(data.name, data.email, data.password)
       setSuccess(true)
     } catch {
-      setError('Registration failed. Email may already be in use.')
-    } finally {
-      setLoading(false)
+      setServerError('Registration failed. Email may already be in use.')
     }
   }
 
@@ -63,7 +70,7 @@ export default function RegisterPage() {
                 <p className="text-sm text-muted">Join Greens & Co. today</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
                   <label className="text-xs font-semibold text-muted uppercase tracking-wider block mb-1.5">
                     Full Name
@@ -71,12 +78,14 @@ export default function RegisterPage() {
                   <div className="relative">
                     <User size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                     <input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      {...register('name')}
                       placeholder="Your full name"
                       className="w-full pl-10 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-[#f9fafb] focus:bg-white"
                     />
                   </div>
+                  {errors.name && (
+                    <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -87,12 +96,14 @@ export default function RegisterPage() {
                     <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                     <input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      {...register('email')}
                       placeholder="you@example.com"
                       className="w-full pl-10 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-[#f9fafb] focus:bg-white"
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -103,9 +114,8 @@ export default function RegisterPage() {
                     <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                     <input
                       type={showPass ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Min. 8 characters"
+                      {...register('password')}
+                      placeholder="Min. 6 characters"
                       className="w-full pl-10 pr-11 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-[#f9fafb] focus:bg-white"
                     />
                     <button
@@ -116,6 +126,9 @@ export default function RegisterPage() {
                       {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
+                  {errors.password && (
+                    <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -126,8 +139,7 @@ export default function RegisterPage() {
                     <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                     <input
                       type={showConfirm ? 'text' : 'password'}
-                      value={confirm}
-                      onChange={(e) => setConfirm(e.target.value)}
+                      {...register('confirmPassword')}
                       placeholder="Repeat your password"
                       className="w-full pl-10 pr-11 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-[#f9fafb] focus:bg-white"
                     />
@@ -139,22 +151,25 @@ export default function RegisterPage() {
                       {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
+                  {errors.confirmPassword && (
+                    <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>
+                  )}
                 </div>
 
-                {error && (
+                {serverError && (
                   <p className="text-xs text-red-500 bg-red-50 border border-red-100 px-3 py-2.5 rounded-lg">
-                    {error}
+                    {serverError}
                   </p>
                 )}
 
                 <button
                   type="submit"
-                  disabled={loading}
-                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 0', background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: 100, fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(22,163,74,0.25)', marginTop: 8, transition: 'background 0.2s, transform 0.2s', opacity: loading ? 0.6 : 1 }}
-                  onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
+                  disabled={isSubmitting}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 0', background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: 100, fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(22,163,74,0.25)', marginTop: 8, transition: 'background 0.2s, transform 0.2s', opacity: isSubmitting ? 0.6 : 1 }}
+                  onMouseEnter={e => { if (!isSubmitting) { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#16a34a'; e.currentTarget.style.transform = 'translateY(0)' }}
                 >
-                  {loading && <Loader2 size={16} className="animate-spin" />}
+                  {isSubmitting && <Loader2 size={16} className="animate-spin" />}
                   Create Account
                 </button>
               </form>

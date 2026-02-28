@@ -4,31 +4,38 @@ import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2, Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { useAuth } from '@/hooks/useAuth'
 
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+})
+type LoginForm = z.infer<typeof loginSchema>
+
 function LoginForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [serverError, setServerError] = useState('')
   const { login } = useAuth()
   const router = useRouter()
   const params = useSearchParams()
   const redirect = params.get('redirect') || '/'
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || !password) return setError('Please fill in all fields.')
-    setError('')
-    setLoading(true)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) })
+
+  const onSubmit = async (data: LoginForm) => {
+    setServerError('')
     try {
-      const user = await login(email, password)
+      const user = await login(data.email, data.password)
       router.push(user.role === 'ADMIN' ? '/admin' : redirect)
     } catch {
-      setError('Invalid email or password.')
-    } finally {
-      setLoading(false)
+      setServerError('Invalid email or password.')
     }
   }
 
@@ -40,7 +47,7 @@ function LoginForm() {
             <p className="text-sm text-muted">Sign in to your account</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="text-xs font-semibold text-muted uppercase tracking-wider block mb-1.5">
                 Email
@@ -49,12 +56,14 @@ function LoginForm() {
                 <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register('email')}
                   placeholder="you@example.com"
                   className="w-full pl-10 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-[#f9fafb] focus:bg-white"
                 />
               </div>
+              {errors.email && (
+                <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -70,8 +79,7 @@ function LoginForm() {
                 <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                 <input
                   type={showPass ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register('password')}
                   placeholder="••••••••"
                   className="w-full pl-10 pr-11 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-[#f9fafb] focus:bg-white"
                 />
@@ -83,22 +91,25 @@ function LoginForm() {
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
+              )}
             </div>
 
-            {error && (
+            {serverError && (
               <p className="text-xs text-red-500 bg-red-50 border border-red-100 px-3 py-2.5 rounded-lg">
-                {error}
+                {serverError}
               </p>
             )}
 
             <button
               type="submit"
-              disabled={loading}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 0', background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: 100, fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(22,163,74,0.25)', marginTop: 8, transition: 'background 0.2s, transform 0.2s', opacity: loading ? 0.6 : 1 }}
-              onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
+              disabled={isSubmitting}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 0', background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: 100, fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(22,163,74,0.25)', marginTop: 8, transition: 'background 0.2s, transform 0.2s', opacity: isSubmitting ? 0.6 : 1 }}
+              onMouseEnter={e => { if (!isSubmitting) { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
               onMouseLeave={e => { e.currentTarget.style.background = '#16a34a'; e.currentTarget.style.transform = 'translateY(0)' }}
             >
-              {loading && <Loader2 size={16} className="animate-spin" />}
+              {isSubmitting && <Loader2 size={16} className="animate-spin" />}
               Sign In
             </button>
           </form>

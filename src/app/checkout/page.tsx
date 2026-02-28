@@ -4,10 +4,34 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Truck, Store, Loader2, MapPin, Phone, User, FileText, Clock, CreditCard, ShieldCheck } from 'lucide-react'
+import { useForm, type Resolver } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { useCart } from '@/hooks/useCart'
 import { formatRupiah } from '@/lib/utils'
 import { createOrder, initiatePayment } from '@/lib/api'
-import { CheckoutForm } from '@/types'
+
+const deliverySchema = z.object({
+  name: z.string().min(2, 'Name is required'),
+  phone: z.string().min(10, 'Invalid phone number'),
+  address: z.string().min(10, 'Address is too short'),
+  notes: z.string().optional(),
+})
+
+const pickupSchema = z.object({
+  name: z.string().min(2, 'Name is required'),
+  phone: z.string().min(10, 'Invalid phone number'),
+  pickupTime: z.string().min(1, 'Please select a pickup time'),
+  notes: z.string().optional(),
+})
+
+type FormValues = {
+  name: string
+  phone: string
+  address?: string
+  notes?: string
+  pickupTime?: string
+}
 
 const DELIVERY_FEE = 10000
 const FREE_DELIVERY_THRESHOLD = 100000
@@ -20,35 +44,38 @@ const PICKUP_TIMES = Array.from({ length: 13 }, (_, i) => {
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart()
   const router = useRouter()
-  const [form, setForm] = useState<CheckoutForm>({
-    name: '',
-    phone: '',
-    type: 'DELIVERY',
-    address: '',
-    notes: '',
-    pickupTime: '',
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [orderType, setOrderType] = useState<'DELIVERY' | 'PICKUP'>('DELIVERY')
+  const [serverError, setServerError] = useState('')
 
-  const isDelivery = form.type === 'DELIVERY'
+  const isDelivery = orderType === 'DELIVERY'
   const isFreeDelivery = !isDelivery || totalPrice >= FREE_DELIVERY_THRESHOLD
   const deliveryFee = isDelivery && totalPrice < FREE_DELIVERY_THRESHOLD ? DELIVERY_FEE : 0
   const total = totalPrice + deliveryFee
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormValues>({
+    resolver: zodResolver(isDelivery ? deliverySchema : pickupSchema) as Resolver<FormValues>,
+  })
+
+  const handleToggleType = (type: 'DELIVERY' | 'PICKUP') => {
+    setOrderType(type)
+    reset()
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!form.name || !form.phone) return setError('Please fill in all required fields.')
-    if (isDelivery && !form.address) return setError('Delivery address is required.')
-    setError('')
-    setLoading(true)
+  const onSubmit = async (data: FormValues) => {
+    setServerError('')
     try {
       const orderRes = await createOrder({
-        ...form,
+        name: data.name,
+        phone: data.phone,
+        type: orderType,
+        address: data.address || '',
+        notes: data.notes || '',
+        pickupTime: data.pickupTime || '',
         items: items.map((i) => ({
           productId: i.productId,
           variantId: i.variantId,
@@ -64,9 +91,7 @@ export default function CheckoutPage() {
       if (payUrl) window.location.href = payUrl
       else router.push('/orders')
     } catch {
-      setError('Something went wrong. Please try again.')
-    } finally {
-      setLoading(false)
+      setServerError('Something went wrong. Please try again.')
     }
   }
 
@@ -75,7 +100,7 @@ export default function CheckoutPage() {
       <div className="max-w-4xl mx-auto pt-8">
         <h1 className="font-heading text-3xl font-bold mb-8">Checkout</h1>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
           <div className="space-y-6">
             {/* Delivery / Pickup Toggle */}
             <div className="bg-white rounded-2xl border border-[#e5e7eb] p-6">
@@ -85,9 +110,9 @@ export default function CheckoutPage() {
                   <button
                     key={type}
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, type }))}
+                    onClick={() => handleToggleType(type)}
                     className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                      form.type === type
+                      orderType === type
                         ? 'bg-green-DEFAULT text-white shadow-sm'
                         : 'text-muted hover:text-[#111827]'
                     }`}
@@ -112,13 +137,14 @@ export default function CheckoutPage() {
                   <div className="relative">
                     <User size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                     <input
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
+                      {...register('name')}
                       placeholder="Your full name"
                       className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
                     />
                   </div>
+                  {errors.name && (
+                    <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+                  )}
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted block mb-1.5">
@@ -127,13 +153,14 @@ export default function CheckoutPage() {
                   <div className="relative">
                     <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                     <input
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
+                      {...register('phone')}
                       placeholder="+62..."
                       className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors"
                     />
                   </div>
+                  {errors.phone && (
+                    <p className="text-xs text-red-500 mt-1">{errors.phone.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -145,14 +172,15 @@ export default function CheckoutPage() {
                   <div className="relative">
                     <MapPin size={14} className="absolute left-3.5 top-3.5 text-muted pointer-events-none" />
                     <textarea
-                      name="address"
-                      value={form.address}
-                      onChange={handleChange}
+                      {...register('address')}
                       rows={3}
                       placeholder="Full delivery address..."
                       className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors resize-none"
                     />
                   </div>
+                  {errors.address && (
+                    <p className="text-xs text-red-500 mt-1">{errors.address.message}</p>
+                  )}
                 </div>
               ) : (
                 <>
@@ -163,9 +191,7 @@ export default function CheckoutPage() {
                     <div className="relative">
                       <Clock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                       <select
-                        name="pickupTime"
-                        value={form.pickupTime}
-                        onChange={handleChange}
+                        {...register('pickupTime')}
                         className="w-full pl-9 pr-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors bg-white appearance-none"
                       >
                         <option value="">Select pickup time...</option>
@@ -174,6 +200,9 @@ export default function CheckoutPage() {
                         ))}
                       </select>
                     </div>
+                    {errors.pickupTime && (
+                      <p className="text-xs text-red-500 mt-1">{errors.pickupTime.message}</p>
+                    )}
                   </div>
                   <div className="flex items-start gap-3 bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-4 py-3">
                     <MapPin size={16} className="text-green-DEFAULT mt-0.5 shrink-0" />
@@ -192,9 +221,7 @@ export default function CheckoutPage() {
                   </span>
                 </label>
                 <textarea
-                  name="notes"
-                  value={form.notes}
-                  onChange={handleChange}
+                  {...register('notes')}
                   rows={2}
                   placeholder="Any special requests?"
                   className="w-full px-4 py-3 text-sm border border-[#e5e7eb] rounded-xl focus:outline-none focus:border-green-DEFAULT transition-colors resize-none"
@@ -202,8 +229,8 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {error && (
-              <p className="text-sm text-red-500 bg-red-50 border border-red-100 px-4 py-3 rounded-xl">{error}</p>
+            {serverError && (
+              <p className="text-sm text-red-500 bg-red-50 border border-red-100 px-4 py-3 rounded-xl">{serverError}</p>
             )}
           </div>
 
@@ -250,10 +277,10 @@ export default function CheckoutPage() {
 
             <button
               type="submit"
-              disabled={loading || items.length === 0}
+              disabled={isSubmitting || items.length === 0}
               className="w-full flex items-center justify-center gap-2 py-4 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark hover:-translate-y-0.5 transition-all shadow-[0_4px_16px_rgba(22,163,74,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? (
+              {isSubmitting ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
                 <CreditCard size={16} />

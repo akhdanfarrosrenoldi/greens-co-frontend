@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
+import { Toaster } from '@/components/ui/toaster'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -37,6 +38,7 @@ export default function RootLayout({
         <main>{children}</main>
         <Footer />
         <CartDrawer />
+        <Toaster />
       </body>
     </html>
   )

@@ -10,11 +10,14 @@ A modern healthy food delivery web app built with **Next.js 16**, **TypeScript**
 |---|---|
 | Framework | Next.js 16.1.6 (Turbopack) |
 | Language | TypeScript 5 |
-| Styling | Tailwind CSS 3 + inline styles |
+| Styling | Tailwind CSS 3 |
 | State Management | Zustand 5 |
 | HTTP Client | Axios |
+| Forms | React Hook Form + Zod |
+| Animation | Framer Motion |
 | Icons | Lucide React |
-| UI Primitives | Radix UI |
+| UI Primitives | Radix UI + shadcn/ui |
+| Notifications | Sonner |
 | Linting | ESLint 9 (flat config) |
 
 ---
@@ -102,6 +105,28 @@ npm run lint
 
 ---
 
+## Form Validation
+
+Forms use **React Hook Form** with **Zod** schema validation.
+
+| Form | Schema | Location |
+|---|---|---|
+| Login | `{ email, password }` | `src/app/auth/login/page.tsx` |
+| Register | `{ name, email, password, confirmPassword }` | `src/app/auth/register/page.tsx` |
+| Checkout | `{ name, phone, type, address?, notes?, pickupTime? }` | `src/app/checkout/page.tsx` |
+
+All validation messages are in English.
+
+---
+
+## Authentication
+
+- JWT stored in `localStorage` (`token`, `user` keys)
+- Cookies `token` + `role` written after login for Edge Middleware route guards (`src/proxy.ts`)
+- Auto-redirect to `/auth/login` on 401 response (Axios interceptor)
+
+---
+
 ## Design Tokens
 
 | Token | Value |
@@ -122,8 +147,10 @@ npm run lint
 Create a `.env.local` file at the project root:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
 ```
+
+See [BACKEND_SPEC.md](./BACKEND_SPEC.md) for the full backend API specification — all 28 endpoints, data models, auth flow, and integration checklist.
 
 ---
 
