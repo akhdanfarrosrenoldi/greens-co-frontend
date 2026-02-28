@@ -246,8 +246,7 @@ export default function BundleForm({ bundle, onClose, onSaved }: BundleFormProps
             form="bundle-form"
             type="submit"
             disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-DEFAULT text-white rounded-full text-sm font-semibold hover:bg-green-dark hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,163,74,0.35)] transition-all disabled:opacity-60"
-            style={{ boxShadow: '0 4px 16px rgba(22,163,74,0.3)' }}
+            className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-DEFAULT text-white rounded-full text-sm font-semibold hover:bg-green-dark transition-colors disabled:opacity-60"
           >
             {loading && <Loader2 size={14} className="animate-spin" />}
             Save Bundle

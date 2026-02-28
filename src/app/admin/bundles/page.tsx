@@ -108,8 +108,7 @@ export default function AdminBundlesPage() {
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-2 px-5 py-2.5 bg-green-DEFAULT text-white rounded-full text-sm font-semibold hover:bg-green-dark hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(22,163,74,0.35)] transition-all"
-          style={{ boxShadow: '0 4px 16px rgba(22,163,74,0.3)' }}>
+          className="flex items-center gap-2 px-5 py-2.5 bg-green-DEFAULT text-white rounded-full text-sm font-semibold hover:bg-green-dark transition-colors">
           <Plus size={16} />
           Add Bundle
         </button>

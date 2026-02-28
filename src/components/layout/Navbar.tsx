@@ -66,7 +66,7 @@ export default function Navbar() {
       )}
     >
       {/* Logo */}
-      <Link href={pathname.startsWith('/admin') ? '/admin' : '/'} className="font-heading text-[22px] font-bold">
+      <Link href="/" className="font-heading text-[22px] font-bold">
         <span style={{ color: '#16a34a' }}>Greens </span>
         <span style={{ color: '#111827' }}>&amp;</span>
         <span style={{ color: '#16a34a' }}> Co.</span>
