@@ -1,7 +1,6 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2, Eye, EyeOff, Mail, Lock } from 'lucide-react'
@@ -34,43 +33,8 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left — Branding */}
-      <div className="hidden lg:flex w-[440px] shrink-0 bg-[#f0fdf4] flex-col justify-between p-10 overflow-hidden">
-        <Link href="/" className="font-heading text-2xl font-bold text-green-DEFAULT">
-          Greens & Co.
-        </Link>
-        <div className="space-y-4">
-          <p className="font-heading text-[34px] font-bold text-[#111827] leading-tight">
-            Fresh food,{' '}
-            <em className="italic text-green-DEFAULT">delivered</em>
-            <br />
-            to your door.
-          </p>
-          <p className="text-[#6b7280] text-[15px] leading-[1.7]">
-            Join thousands of customers enjoying healthy, locally-sourced meals every day.
-          </p>
-        </div>
-        <div className="relative h-56 rounded-2xl overflow-hidden shadow-lg">
-          <Image
-            src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80"
-            alt="Fresh salad"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#f0fdf4]/80 via-transparent to-transparent" />
-        </div>
-      </div>
-
-      {/* Right — Form */}
-      <div className="flex-1 flex items-center justify-center px-8 py-12 bg-white">
-        <div className="w-full max-w-sm">
-          <Link
-            href="/"
-            className="font-heading text-xl font-bold text-green-DEFAULT lg:hidden block mb-8"
-          >
-            Greens & Co.
-          </Link>
+    <div className="min-h-screen bg-white flex justify-center items-start pt-20 px-8 pb-12">
+      <div className="w-full max-w-sm">
           <div className="mb-8">
             <h1 className="font-heading text-3xl font-bold mb-1">Welcome Back</h1>
             <p className="text-sm text-muted">Sign in to your account</p>
@@ -130,7 +94,9 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 py-3.5 bg-green-DEFAULT text-white rounded-full font-semibold hover:bg-green-dark hover:-translate-y-0.5 transition-all disabled:opacity-60 shadow-[0_4px_16px_rgba(22,163,74,0.25)] mt-2"
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '14px 0', background: '#16a34a', color: '#ffffff', border: 'none', borderRadius: 100, fontFamily: 'DM Sans, sans-serif', fontSize: 15, fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 16px rgba(22,163,74,0.25)', marginTop: 8, transition: 'background 0.2s, transform 0.2s', opacity: loading ? 0.6 : 1 }}
+              onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#15803d'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#16a34a'; e.currentTarget.style.transform = 'translateY(0)' }}
             >
               {loading && <Loader2 size={16} className="animate-spin" />}
               Sign In
@@ -145,7 +111,6 @@ function LoginForm() {
           </p>
         </div>
       </div>
-    </div>
   )
 }
 

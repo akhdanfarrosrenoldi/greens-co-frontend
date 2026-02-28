@@ -72,12 +72,14 @@ export default function Navbar() {
         <span style={{ color: '#16a34a' }}> Co.</span>
       </Link>
 
-      {/* Desktop Nav Links */}
-      <ul className="hidden md:flex gap-8 list-none items-center">
-        {links.map((link) => (
-          <NavLink key={link.href} href={link.href} label={link.label} />
-        ))}
-      </ul>
+      {/* Desktop Nav Links — homepage only */}
+      {isHome && (
+        <ul className="hidden md:flex gap-8 list-none items-center">
+          {links.map((link) => (
+            <NavLink key={link.href} href={link.href} label={link.label} />
+          ))}
+        </ul>
+      )}
 
       {/* Actions */}
       <div className="flex items-center gap-2.5">
@@ -135,7 +137,7 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="absolute top-full left-0 right-0 bg-white border-b border-[#e5e7eb] shadow-lg md:hidden">
           <div className="flex flex-col p-6 gap-4">
-            {links.map((link) => (
+            {isHome && links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -145,7 +147,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <hr className="border-[#e5e7eb]" />
+            {isHome && <hr className="border-[#e5e7eb]" />}
             {user ? (
               <button
                 onClick={() => { logout(); setMobileOpen(false) }}

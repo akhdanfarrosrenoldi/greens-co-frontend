@@ -61,7 +61,7 @@ export default function FeaturedMenu() {
   useScrollReveal()
 
   return (
-    <section className="bg-[#f9fafb] px-8 md:px-16 py-24">
+    <section id="menu" className="bg-[#f9fafb] px-8 md:px-16 py-24">
       <div className="reveal flex flex-col md:flex-row md:justify-between md:items-end mb-12">
         <div>
           <span className="section-tag">Our Menu</span>
